@@ -64,7 +64,7 @@ public class MyServlet extends HttpServlet {
     static OpenTelemetry initOpenTelemetry() {
         // Metrics
         OtlpGrpcMetricExporter otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
-                .setEndpoint("http://localhost:4317").build();
+                .setEndpoint("http://otel-collector:4317").build();
 
         PeriodicMetricReader periodicMetricReader = PeriodicMetricReader.builder(otlpGrpcMetricExporter)
                 .setInterval(java.time.Duration.ofSeconds(5))
@@ -76,7 +76,7 @@ public class MyServlet extends HttpServlet {
 
         // Traces
         OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
-                .setEndpoint("http://localhost:4317").build();
+                .setEndpoint("http://otel-collector:4317").build();
 
         SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
                 .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
