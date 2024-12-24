@@ -83,7 +83,7 @@
                 <version>3.4.0</version>
                 <configuration>
                     <warName>MyWebApp</warName>
-                    <outputDirectory>../tomcat/</outputDirectory>
+                    <outputDirectory>tomcat/</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

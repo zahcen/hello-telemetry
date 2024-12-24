@@ -27,6 +27,8 @@ import org.apache.http.util.EntityUtils;
 
 // OpenTelemetry API Imports
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.Attributes; 
+import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
@@ -34,6 +36,7 @@ import io.opentelemetry.api.trace.Tracer;
 
 // OpenTelemetry SDK Imports
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
@@ -74,6 +77,10 @@ public class MyServlet extends HttpServlet {
 
     // Initializes OpenTelemetry
     static OpenTelemetry initOpenTelemetry() {
+
+        // Set up the resource with service.name 
+        Resource resource = Resource.create(Attributes.of(AttributeKey.stringKey("service.name"), "tomcat-service"));
+
         // Metrics
         OtlpGrpcMetricExporter otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
                 .setEndpoint("http://otel-collector:4317").build();
@@ -91,6 +98,7 @@ public class MyServlet extends HttpServlet {
                 .setEndpoint("http://otel-collector:4317").build();
 
         SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+                .setResource(resource)
                 .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
                 .build();
 
@@ -100,7 +108,7 @@ public class MyServlet extends HttpServlet {
                 .build();
 
         // SDK
-        OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()
+        OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()                
                 .setMeterProvider(sdkMeterProvider)
                 .setTracerProvider(sdkTracerProvider)
                 .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
