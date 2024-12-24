@@ -29,6 +29,15 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=tomcat-service
     depends_on:
       - mysql
+      - python-service
+    networks:
+      - my_network
+
+  python-service:
+    build:
+      context: ./python-service
+    ports:
+      - "5000:5000"
     networks:
       - my_network
 
