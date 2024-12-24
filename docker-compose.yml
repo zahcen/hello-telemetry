@@ -1,0 +1,42 @@
+version: '3.1'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - my_network
+
+  tomcat:
+    build:
+      context: ./tomcat
+    ports:
+      - "8080:8080"
+      - "9010:9010"
+      - "1099:1099"
+    # volumes:
+    #   - ./webapp:/usr/local/tomcat/webapps
+    #   - ./opentelemetry-agent:/usr/local/tomcat/opentelemetry-agent
+    environment:
+      - JAVA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=1099 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost
+      # - JAVA_TOOL_OPTIONS=-javaagent:/usr/local/tomcat/opentelemetry-agent/opentelemetry-javaagent.jar
+    depends_on:
+      - mysql
+    networks:
+      - my_network
+
+volumes:
+  mysql_data:
+
+networks:
+  my_network:
