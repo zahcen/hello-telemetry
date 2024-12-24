@@ -12,13 +12,17 @@ processors:
 exporters:
   debug:
     verbosity: detailed
+  otlp:
+    endpoint: "http://jaeger:4317"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [debug,otlp]
     
     metrics:
       receivers: [otlp]
