@@ -5,9 +5,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.semconv.resource import ResourceAttributes
-from opentelemetry.propagate import set_global_textmap
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 
 # Create a Resource with the service.name attribute 
 resource = Resource.create({ResourceAttributes.SERVICE_NAME: "python-service"})
@@ -20,14 +18,8 @@ provider.add_span_processor(processor)
 # Sets the global default tracer provider
 trace.set_tracer_provider(provider)
 
-# Set the global propagator 
-set_global_textmap(TraceContextTextMapPropagator())
-
-# Instrument threading for context propagation 
-ThreadingInstrumentor().instrument()
-
 # Acquire a tracer 
-tracer = trace.get_tracer("python-service")
+tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
 
