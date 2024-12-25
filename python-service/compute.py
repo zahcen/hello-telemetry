@@ -5,6 +5,9 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.propagate import set_global_textmap
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 
 # Create a Resource with the service.name attribute 
 resource = Resource.create({ResourceAttributes.SERVICE_NAME: "python-service"})
@@ -17,6 +20,12 @@ provider.add_span_processor(processor)
 # Sets the global default tracer provider
 trace.set_tracer_provider(provider)
 
+# Set the global propagator 
+set_global_textmap(TraceContextTextMapPropagator())
+
+# Instrument threading for context propagation 
+ThreadingInstrumentor().instrument()
+
 # Acquire a tracer 
 tracer = trace.get_tracer("python-service")
 
@@ -24,7 +33,8 @@ app = Flask(__name__)
 
 @app.route('/compute_average_age', methods=['POST'])
 def compute_average_age():
-    with tracer.start_as_current_span("compute_average_age"):
+    ctx = TraceContextTextMapPropagator().extract(request.headers)
+    with tracer.start_as_current_span("compute_average_age", context=ctx):
         data = request.json['data']
         if not data:
             return jsonify({'error': 'No data provided'}), 400
