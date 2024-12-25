@@ -25,7 +25,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-
 //Global OpenTelemetry
 import io.opentelemetry.api.GlobalOpenTelemetry;
 
@@ -56,23 +55,26 @@ import io.opentelemetry.api.trace.Tracer;
 // import io.opentelemetry.context.propagation.ContextPropagators;
 // import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 
+// Baggage
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.context.Context;
+
 public class MyServlet extends HttpServlet {
 
     // Define Class Fields
     private static final String INSTRUMENTATION_NAME = MyServlet.class.getName();
-    
-    //** Auto + Manual instrumentation */
-        /*********************/
-    //Global OpenTelemetry
-    private final static Tracer tracer = GlobalOpenTelemetry.getTracer(INSTRUMENTATION_NAME);       
+
+    // ** Auto + Manual instrumentation */
+    /*********************/
+    // Global OpenTelemetry
+    private final static Tracer tracer = GlobalOpenTelemetry.getTracer(INSTRUMENTATION_NAME);
     private final static Meter meter = GlobalOpenTelemetry.getMeter(INSTRUMENTATION_NAME);
     private final LongCounter requestCounter = meter.counterBuilder("app.db.db_requests")
-        .setDescription("Count DB requests")
-        .build();
+            .setDescription("Count DB requests")
+            .build();
 
-    
     /** Manual Only Instrumentations */
-        /*********************/
+    /*********************/
 
     // private final Meter meter;
     // private final LongCounter requestCounter;
@@ -82,69 +84,73 @@ public class MyServlet extends HttpServlet {
     // Initializes OpenTelemetry and calls parameterized constructor with this new
     // instance of OpenTelemetry
     // public MyServlet() {
-    //     // this(initOpenTelemetry());
+    // // this(initOpenTelemetry());
     // }
 
     // Parameterized Constructor
     // Accepts OpenTelemetry instance and initializes the meter, request counter and
     // tracer.
     // public MyServlet(OpenTelemetry openTelemetry) {
-    //     this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
-    //     this.requestCounter = meter.counterBuilder("app.db.db_requests")
-    //             .setDescription("Counts DB requests")
-    //             .build();
-    //     this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);
+    // this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
+    // this.requestCounter = meter.counterBuilder("app.db.db_requests")
+    // .setDescription("Counts DB requests")
+    // .build();
+    // this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);
     // }
 
     // // Initializes OpenTelemetry
     // static OpenTelemetry initOpenTelemetry() {
 
-    //     // Set up the resource with service.name 
-    //     Resource resource = Resource.create(Attributes.of(AttributeKey.stringKey("service.name"), "tomcat-service"));
+    // // Set up the resource with service.name
+    // Resource resource =
+    // Resource.create(Attributes.of(AttributeKey.stringKey("service.name"),
+    // "tomcat-service"));
 
-    //     // Metrics
-    //     OtlpGrpcMetricExporter otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
-    //             .setEndpoint("http://otel-collector:4317").build();
+    // // Metrics
+    // OtlpGrpcMetricExporter otlpGrpcMetricExporter =
+    // OtlpGrpcMetricExporter.builder()
+    // .setEndpoint("http://otel-collector:4317").build();
 
-    //     PeriodicMetricReader periodicMetricReader = PeriodicMetricReader.builder(otlpGrpcMetricExporter)
-    //             .setInterval(java.time.Duration.ofSeconds(60))
-    //             .build();
+    // PeriodicMetricReader periodicMetricReader =
+    // PeriodicMetricReader.builder(otlpGrpcMetricExporter)
+    // .setInterval(java.time.Duration.ofSeconds(60))
+    // .build();
 
-    //     SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
-    //             .registerMetricReader(periodicMetricReader)
-    //             .build();
+    // SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
+    // .registerMetricReader(periodicMetricReader)
+    // .build();
 
-    //     // Traces
-    //     OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
-    //             .setEndpoint("http://otel-collector:4317").build();
+    // // Traces
+    // OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
+    // .setEndpoint("http://otel-collector:4317").build();
 
-    //     SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-    //             .setResource(resource)
-    //             .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
-    //             .build();
+    // SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+    // .setResource(resource)
+    // .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
+    // .build();
 
-    //     // Traces as Logs
-    //     SdkTracerProvider sdkTracerProviderLogs = SdkTracerProvider.builder()
-    //             .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
-    //             .build();
+    // // Traces as Logs
+    // SdkTracerProvider sdkTracerProviderLogs = SdkTracerProvider.builder()
+    // .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
+    // .build();
 
-    //     // SDK
-    //     OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()                
-    //             .setMeterProvider(sdkMeterProvider)
-    //             .setTracerProvider(sdkTracerProvider)
-    //             .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-    //             // .setTracerProvider(sdkTracerProviderLogs) // NOTE: This line has to be
-    //             // commented out when using live. The second `.setTracerProvder(..)` will
-    //             // override previous one
-    //             .build();
+    // // SDK
+    // OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()
+    // .setMeterProvider(sdkMeterProvider)
+    // .setTracerProvider(sdkTracerProvider)
+    // .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+    // // .setTracerProvider(sdkTracerProviderLogs) // NOTE: This line has to be
+    // // commented out when using live. The second `.setTracerProvder(..)` will
+    // // override previous one
+    // .build();
 
-    //     // Cleanup
-    //     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-    //         sdkMeterProvider.close();
-    //         sdkTracerProvider.close();
-    //     }));
+    // // Cleanup
+    // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+    // sdkMeterProvider.close();
+    // sdkTracerProvider.close();
+    // }));
 
-    //     return sdk;
+    // return sdk;
     // }
 
     @Override
@@ -171,7 +177,8 @@ public class MyServlet extends HttpServlet {
                 Class.forName("com.mysql.cj.jdbc.Driver");
 
                 // Establish connection
-                Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPassword);
+                Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
+                        jdbcPassword);
 
                 // Create a statement
                 Statement statement = connection.createStatement();
@@ -190,7 +197,8 @@ public class MyServlet extends HttpServlet {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
                     int age = resultSet.getInt("age");
-                    out.println("<tr><td>" + id + "</td><td>" + name + "</td><td>" + age + "</td></tr>");
+                    out.println("<tr><td>" + id + "</td><td>" + name + "</td><td>" + age
+                            + "</td></tr>");
 
                     JSONObject dataObject = new JSONObject();
                     dataObject.put("id", id);
@@ -219,10 +227,22 @@ public class MyServlet extends HttpServlet {
             } finally {
                 span.end(); // Close the span once request complete
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     private String getAverageAge(List<JSONObject> dataList) throws IOException {
+        // Create baggage with a key-value pair
+        Baggage baggage = Baggage.builder()
+                .put("user.id", "12345") 
+                .put("user.name", "john")
+                .build();
+
+        // Attach the baggage to the current context
+        Context contextWithBaggage = Context.current().with(baggage);
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost("http://python-service:5000/compute_average_age");
             httpPost.setHeader("Content-Type", "application/json");
@@ -232,6 +252,10 @@ public class MyServlet extends HttpServlet {
 
             StringEntity entity = new StringEntity(requestData.toString());
             httpPost.setEntity(entity);
+
+            // Inject the OpenTelemetry context (including baggage) into the HTTP headers
+            GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+                    .inject(contextWithBaggage, httpPost, (carrier, key, value) -> carrier.setHeader(key, value));
 
             try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                 String responseString = EntityUtils.toString(response.getEntity());
