@@ -25,106 +25,127 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+
+//Global OpenTelemetry
+import io.opentelemetry.api.GlobalOpenTelemetry;
+
 // OpenTelemetry API Imports
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.common.Attributes; 
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 
-// OpenTelemetry SDK Imports
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.metrics.SdkMeterProvider;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+// // Manual only instrumentation
+// OpenTelemetry API Imports
+// import io.opentelemetry.api.OpenTelemetry;
+// import io.opentelemetry.api.common.Attributes; 
+// import io.opentelemetry.api.common.AttributeKey;
 
-// OpenTelemetry Exporter & Propgator Imports
-import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
-import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
-import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.exporter.logging.LoggingSpanExporter;
+// // OpenTelemetry SDK Imports
+// import io.opentelemetry.sdk.OpenTelemetrySdk;
+// import io.opentelemetry.sdk.resources.Resource;
+// import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+// import io.opentelemetry.sdk.trace.SdkTracerProvider;
+// import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+// import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+
+// // OpenTelemetry Exporter & Propgator Imports
+// import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+// import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
+// import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+// import io.opentelemetry.context.propagation.ContextPropagators;
+// import io.opentelemetry.exporter.logging.LoggingSpanExporter;
 
 public class MyServlet extends HttpServlet {
 
     // Define Class Fields
     private static final String INSTRUMENTATION_NAME = MyServlet.class.getName();
-    private final Meter meter;
-    private final LongCounter requestCounter;
-    private final Tracer tracer;
+    
+    //** Auto + Manual instrumentation */
+        /*********************/
+    //Global OpenTelemetry
+    private final static Tracer tracer = GlobalOpenTelemetry.getTracer(INSTRUMENTATION_NAME);       
+    private final static Meter meter = GlobalOpenTelemetry.getMeter(INSTRUMENTATION_NAME);
+    private final LongCounter requestCounter = meter.counterBuilder("app.db.db_requests")
+        .setDescription("Count DB requests")
+        .build();
+
+    
+    /** Manual Only Instrumentations */
+        /*********************/
+
+    // private final Meter meter;
+    // private final LongCounter requestCounter;
+    // private final Tracer tracer;
 
     // Default Constructor
     // Initializes OpenTelemetry and calls parameterized constructor with this new
     // instance of OpenTelemetry
-    public MyServlet() {
-        this(initOpenTelemetry());
-    }
+    // public MyServlet() {
+    //     // this(initOpenTelemetry());
+    // }
 
     // Parameterized Constructor
     // Accepts OpenTelemetry instance and initializes the meter, request counter and
     // tracer.
-    public MyServlet(OpenTelemetry openTelemetry) {
-        this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
-        this.requestCounter = meter.counterBuilder("app.db.db_requests")
-                .setDescription("Counts DB requests")
-                .build();
-        this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);
-    }
+    // public MyServlet(OpenTelemetry openTelemetry) {
+    //     this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
+    //     this.requestCounter = meter.counterBuilder("app.db.db_requests")
+    //             .setDescription("Counts DB requests")
+    //             .build();
+    //     this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);
+    // }
 
-    // Initializes OpenTelemetry
-    static OpenTelemetry initOpenTelemetry() {
+    // // Initializes OpenTelemetry
+    // static OpenTelemetry initOpenTelemetry() {
 
-        // Set up the resource with service.name 
-        Resource resource = Resource.create(Attributes.of(AttributeKey.stringKey("service.name"), "tomcat-service"));
+    //     // Set up the resource with service.name 
+    //     Resource resource = Resource.create(Attributes.of(AttributeKey.stringKey("service.name"), "tomcat-service"));
 
-        // Metrics
-        OtlpGrpcMetricExporter otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
-                .setEndpoint("http://otel-collector:4317").build();
+    //     // Metrics
+    //     OtlpGrpcMetricExporter otlpGrpcMetricExporter = OtlpGrpcMetricExporter.builder()
+    //             .setEndpoint("http://otel-collector:4317").build();
 
-        PeriodicMetricReader periodicMetricReader = PeriodicMetricReader.builder(otlpGrpcMetricExporter)
-                .setInterval(java.time.Duration.ofSeconds(60))
-                .build();
+    //     PeriodicMetricReader periodicMetricReader = PeriodicMetricReader.builder(otlpGrpcMetricExporter)
+    //             .setInterval(java.time.Duration.ofSeconds(60))
+    //             .build();
 
-        SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
-                .registerMetricReader(periodicMetricReader)
-                .build();
+    //     SdkMeterProvider sdkMeterProvider = SdkMeterProvider.builder()
+    //             .registerMetricReader(periodicMetricReader)
+    //             .build();
 
-        // Traces
-        OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
-                .setEndpoint("http://otel-collector:4317").build();
+    //     // Traces
+    //     OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder()
+    //             .setEndpoint("http://otel-collector:4317").build();
 
-        SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
-                .setResource(resource)
-                .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
-                .build();
+    //     SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
+    //             .setResource(resource)
+    //             .addSpanProcessor(SimpleSpanProcessor.create(otlpGrpcSpanExporter))
+    //             .build();
 
-        // Traces as Logs
-        SdkTracerProvider sdkTracerProviderLogs = SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
-                .build();
+    //     // Traces as Logs
+    //     SdkTracerProvider sdkTracerProviderLogs = SdkTracerProvider.builder()
+    //             .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
+    //             .build();
 
-        // SDK
-        OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()                
-                .setMeterProvider(sdkMeterProvider)
-                .setTracerProvider(sdkTracerProvider)
-                .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
-                // .setTracerProvider(sdkTracerProviderLogs) // NOTE: This line has to be
-                // commented out when using live. The second `.setTracerProvder(..)` will
-                // override previous one
-                .build();
+    //     // SDK
+    //     OpenTelemetrySdk sdk = OpenTelemetrySdk.builder()                
+    //             .setMeterProvider(sdkMeterProvider)
+    //             .setTracerProvider(sdkTracerProvider)
+    //             .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+    //             // .setTracerProvider(sdkTracerProviderLogs) // NOTE: This line has to be
+    //             // commented out when using live. The second `.setTracerProvder(..)` will
+    //             // override previous one
+    //             .build();
 
-        // Cleanup
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            sdkMeterProvider.close();
-            sdkTracerProvider.close();
-        }));
+    //     // Cleanup
+    //     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+    //         sdkMeterProvider.close();
+    //         sdkTracerProvider.close();
+    //     }));
 
-        return sdk;
-    }
+    //     return sdk;
+    // }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
