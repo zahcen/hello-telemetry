@@ -58,6 +58,7 @@ import io.opentelemetry.api.trace.Tracer;
 // Baggage
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
 
 public class MyServlet extends HttpServlet {
 
@@ -161,11 +162,11 @@ public class MyServlet extends HttpServlet {
         // Increment metric counter
         requestCounter.add(1);
 
-        // Start a span
+        // Start a span        
         Span span = tracer.spanBuilder("initiate database query").startSpan();
 
         // Establish database connection and get data
-        try (PrintWriter out = response.getWriter()) {
+        try (Scope scope = span.makeCurrent(); PrintWriter out = response.getWriter()) {
             // JDBC connection parameters
             // String jdbcUrl = "jdbc:mysql://localhost:3306/mydatabase";
             String jdbcUrl = "jdbc:mysql://mysql_container:3306/mydatabase";
