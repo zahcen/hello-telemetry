@@ -32,6 +32,7 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 
 // // Manual only instrumentation
@@ -81,12 +82,28 @@ public class MyServlet extends HttpServlet {
     // private final LongCounter requestCounter;
     // private final Tracer tracer;
 
-    // Default Constructor
-    // Initializes OpenTelemetry and calls parameterized constructor with this new
-    // instance of OpenTelemetry
-    // public MyServlet() {
-    // // this(initOpenTelemetry());
-    // }
+    // Constructor
+    public MyServlet() {
+        // Display "getting data..." message 
+        System.out.println("Getting data...");
+        
+        // Start a new span for the sleep
+        Span span = tracer.spanBuilder("SleepForTwoSeconds")
+                .setSpanKind(SpanKind.INTERNAL)
+                .startSpan();
+
+        try (Scope scope = span.makeCurrent()) {
+        // try{
+            // Sleep for 2 seconds
+            Thread.sleep(2000);
+            span.end(); // Ensure the span ends after the sleep
+        } catch (InterruptedException e) {
+            span.recordException(e);
+            e.printStackTrace();
+        }        
+        // Initializes OpenTelemetry and calls parameterized constructor with this new instance of OpenTelemetry
+        // // this(initOpenTelemetry());
+    }    
 
     // Parameterized Constructor
     // Accepts OpenTelemetry instance and initializes the meter, request counter and
@@ -162,7 +179,7 @@ public class MyServlet extends HttpServlet {
         // Increment metric counter
         requestCounter.add(1);
 
-        // Start a span        
+        // Start a span
         Span span = tracer.spanBuilder("initiate database query").startSpan();
 
         // Establish database connection and get data
@@ -237,7 +254,7 @@ public class MyServlet extends HttpServlet {
     private String getAverageAge(List<JSONObject> dataList) throws IOException {
         // Create baggage with a key-value pair
         Baggage baggage = Baggage.builder()
-                .put("user.id", "12345") 
+                .put("user.id", "12345")
                 .put("user.name", "john")
                 .build();
 
