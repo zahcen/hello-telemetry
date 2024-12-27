@@ -29,8 +29,15 @@ public class MyServlet extends HttpServlet {
 
     // Constructor
     public MyServlet() {
-        // Print initial HTML
-        // printInitialHtml(out);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<JSONObject> dataList = new ArrayList<>();
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/html");
 
         // Sleep for 2 seconds
         try {
@@ -38,93 +45,69 @@ public class MyServlet extends HttpServlet {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    // Method to print initial HTML
-    private void printInitialHtml(PrintWriter out) {
-        out.println("<html><body>");
-        out.println("<h1>Database Results</h1>");
-        out.println("<div id='data'>Getting data...</div>");
-        out.println("<script>");
-        out.println("function updateData(html) { document.getElementById('data').innerHTML = html; }");
-        out.println("</script>");
-        out.println("</body></html>");
-        out.flush();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html");
-        // PrintWriter out = response.getWriter();
 
         // Establish database connection and get data
-        try (PrintWriter out = response.getWriter()) {
-            // JDBC connection parameters
-            String jdbcUrl = "jdbc:mysql://mysql_container:3306/mydatabase";
-            String jdbcUser = "myuser";
-            String jdbcPassword = "mypassword";
 
-            try {
-                // Load MySQL JDBC Driver
-                Class.forName("com.mysql.cj.jdbc.Driver");
+        // JDBC connection parameters
+        String jdbcUrl = "jdbc:mysql://mysql_container:3306/mydatabase";
+        String jdbcUser = "myuser";
+        String jdbcPassword = "mypassword";
 
-                // Establish connection
-                Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
-                        jdbcPassword);
+        try {
+            // Load MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-                // Create a statement
-                Statement statement = connection.createStatement();
+            // Establish connection
+            Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
+                    jdbcPassword);
 
-                // Execute a query
-                String query = "SELECT * FROM mytable";
-                ResultSet resultSet = statement.executeQuery(query);
+            // Create a statement
+            Statement statement = connection.createStatement();
 
-                out.println("<html><body>");
-                out.println("<h1>Database Results</h1>");
-                out.println("<table border='1'>");
-                out.println("<tr><th>ID</th><th>Name</th><th>Age</th></tr>");
+            // Execute a query
+            String query = "SELECT * FROM mytable";
+            ResultSet resultSet = statement.executeQuery(query);
 
-                List<JSONObject> dataList = new ArrayList<>();
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String name = resultSet.getString("name");
-                    int age = resultSet.getInt("age");
-                    out.println("<tr><td>" + id + "</td><td>" + name + "</td><td>" + age
-                            + "</td></tr>");
+            // Build web page
+            out.println("<html><body>");
+            out.println("<h1>Database Results</h1>");
+            out.println("<table border='1'>");
+            out.println("<tr><th>ID</th><th>Name</th><th>Age</th></tr>");
 
-                    JSONObject dataObject = new JSONObject();
-                    dataObject.put("id", id);
-                    dataObject.put("name", name);
-                    dataObject.put("age", age);
-                    dataList.add(dataObject);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+                out.println("<tr><td>" + id + "</td><td>" + name + "</td><td>" + age
+                        + "</td></tr>");
 
-                }
-                out.println("</table>");
+                JSONObject dataObject = new JSONObject();
+                dataObject.put("id", id);
+                dataObject.put("name", name);
+                dataObject.put("age", age);
+                dataList.add(dataObject);
 
-                // Make a request to the Python microservice
-                String averageAge = getAverageAge(dataList);
-                out.println("<h2>Average Age: " + averageAge + "</h2>");
-                out.println("</body></html>");
-
-            } catch (ClassNotFoundException e) {
-                System.out.println("MySQL JDBC Driver not found.");
-                e.printStackTrace();
-            } catch (SQLException e) {
-                System.out.println("Connection failed.");
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-                out.println("<h2>Error: " + e.getMessage() + "</h2>");
             }
+            out.println("</table>");
+        } catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC Driver not found.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Connection failed.");
+            e.printStackTrace();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            out.println("<h2>Error: " + e.getMessage() + "</h2>");
         }
+
+        // Make a request to the Python microservice
+        String averageAge = getAverageAge(dataList);
+        out.println("<h2>Average Age: " + averageAge + "</h2>");
+        out.println("</body></html>");
 
     }
 
     private String getAverageAge(List<JSONObject> dataList) throws IOException {
-
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost("http://python-service:5000/compute_average_age");
             httpPost.setHeader("Content-Type", "application/json");
