@@ -1,7 +1,7 @@
 services:
-  mysql:
+  ht-mysql:
     image: mysql:latest
-    container_name: mysql_container
+    container_name: ht-mysql
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: mydatabase
@@ -13,9 +13,10 @@ services:
       - mysql_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
     networks:
-      - my_network
+      - ht_network
 
-  tomcat:
+  ht-tomcat:
+    container_name: ht-tomcat
     build:
       context: ./tomcat
     ports:
@@ -25,22 +26,23 @@ services:
     environment:
       - JAVA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=1099 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost
     depends_on:
-      - mysql
-      - python-service
+      - ht-mysql
+      - ht-python-service
     networks:
-      - my_network
+      - ht_network
 
-  python-service:
+  ht-python-service:
+    container_name: ht-python-service
     build:
       context: ./python-service
     ports:
       - "5000:5000"
     networks:
-      - my_network
+      - ht_network
 
-  otel-collector-ht:
+  ht-otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
-    container_name: otel-collector-ht
+    container_name: ht-otel-collector
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
     ports:
@@ -52,9 +54,10 @@ services:
       - "4318:4318" # OTLP http receiver
       - "55679:55679" # zpages extension
     networks:
-      - my_network
+      - ht_network
 
-  jaeger-ht:
+  ht-jaeger:
+    container_name: ht-jaeger
     image: jaegertracing/all-in-one:latest
     ports:
       - "6831:6831/udp"
@@ -66,11 +69,11 @@ services:
       - "14269:14269"
       - "9411:9411"
     networks:
-      - my_network
+      - ht_network
 
 volumes:
   mysql_data:
 
 
 networks:
-  my_network:
+  ht_network:
