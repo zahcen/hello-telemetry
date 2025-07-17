@@ -30,11 +30,13 @@ jobs:
          kube-config: ${{ secrets.KUBECONFIG_DATA }}
 
 
-    - name: Apply tomcat Kubernetes manifests
+    - name: Apply Kubernetes manifests
       run: |
          kubectl version
          kubectl apply -f java-app/manifest/
          kubectl rollout restart deploy ht-tomcat -n hello-telemetry
+         kubectl apply -f python-service/manifest/
+         kubectl rollout restart deploy ht-python-service -n hello-telemetry
 
     - name: Maven Package
       run: |
