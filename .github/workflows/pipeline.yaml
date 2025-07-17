@@ -38,7 +38,7 @@ jobs:
         ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
         cp /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war java-app/
         docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest -f java-app/Dockerfile .
-        docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest        
+        docker push ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest        
 
     # - name: Build Java App Docker Image
     #   id: buildAndPushTomcatImage
