@@ -23,6 +23,13 @@ jobs:
         echo "First command"
         ls -al
 
+    - name: Setup kubectl
+      uses: ThomasKliszowski/setup-kubectl@v1
+      with:
+         # Base64 encoded kube config
+         kube-config: ${{ secrets.KUBECONFIG_DATA }}
+
+
     - name: Apply tomcat Kubernetes manifests
       run: |
          kubectl version
