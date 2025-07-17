@@ -27,17 +27,18 @@ jobs:
         mvn clean package -DskipTests -f java-app/pom.xml
         echo "list files"
         ls -al
+        ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
 
-    # - name: Build Java App Docker Image
-    #   id: buildAndPushTomcatImage
-    #   uses: MaximilianoBz/dockerhub-buildpush@v1.0
-    #   with:
-    #     registry_url: 'docker.io'
-    #     repository_name: 'hello-telemetry-tomcat-service'
-    #     user_name: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_TOKEN }}
-    #     image_version: 'latest'
-    #     docker_file: 'java-app'
+    - name: Build Java App Docker Image
+      id: buildAndPushTomcatImage
+      uses: MaximilianoBz/dockerhub-buildpush@v1.0
+      with:
+        registry_url: 'docker.io'
+        repository_name: 'hello-telemetry-tomcat-service'
+        user_name: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+        image_version: 'latest'
+        docker_file: 'java-app'
       
     - run: |
         ls -al
