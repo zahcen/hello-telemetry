@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: ht-vs
+  namespace: hello-telemetry
+spec:
+  gateways:
+  - istio-system/cert-manager-gateway
+  hosts:
+  - ht.zitaconseil.fr
+  http:
+  - route:
+    - destination:
+        host: ht-tomcat-svc.hello-telemetry.svc.cluster.local
+        port:
+          number: 80
