@@ -2,8 +2,12 @@ name: Docker Image CI
 
 on:
   push:
+    paths-ignore:
+      - 'pipeline.yaml'    
     branches: [ "main" ]
   pull_request:
+    paths-ignore:
+      - 'pipeline.yaml'
     branches: [ "main" ]
 
 jobs:
@@ -23,17 +27,17 @@ jobs:
         user_name: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
         image_version: 'latest'
-        docker_file: 'python-service/Dokerfile'
+        docker_file: 'python-service/Dockerfile'
         
-    - name: Setup kubectl
-      uses: ThomasKliszowski/setup-kubectl@v1
-      with:
-         # Base64 encoded kube config
-         kube-config: ${{ secrets.KUBECONFIG_B64 }}
+    # - name: Setup kubectl
+    #   uses: ThomasKliszowski/setup-kubectl@v1
+    #   with:
+    #      # Base64 encoded kube config
+    #      kube-config: ${{ secrets.KUBECONFIG_B64 }}
 
-    - name: Apply tomcat Kubernetes manifests
-      run: |
-         kubectl version
-         kubectl apply -f python-service/manifest/
-         #kubectl rollout restart deploy ariba-simulator -n punchout
+    # - name: Apply tomcat Kubernetes manifests
+    #   run: |
+    #      kubectl version
+    #      kubectl apply -f python-service/manifest/
+    #      #kubectl rollout restart deploy ariba-simulator -n punchout
          
