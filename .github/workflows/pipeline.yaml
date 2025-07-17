@@ -23,21 +23,6 @@ jobs:
         echo "First command"
         ls -al
 
-    - name: Setup kubectl
-      uses: ThomasKliszowski/setup-kubectl@v1
-      with:
-         # Base64 encoded kube config
-         kube-config: ${{ secrets.KUBECONFIG_DATA }}
-
-
-    - name: Apply Kubernetes manifests
-      run: |
-         kubectl version
-         kubectl apply -f java-app/manifest/
-         kubectl rollout restart deploy ht-tomcat -n hello-telemetry
-         kubectl apply -f python-service/manifest/
-         kubectl rollout restart deploy ht-python-service -n hello-telemetry
-
     - name: Maven Package
       run: |
         mvn clean package -DskipTests -f java-app/pom.xml
@@ -68,30 +53,23 @@ jobs:
          kubectl apply -f java-app/manifest/
          kubectl rollout restart deploy ht-tomcat -n hello-telemetry
 
-    # - name: Build Java App Docker Image
-    #   id: buildAndPushTomcatImage
-    #   uses: MaximilianoBz/dockerhub-buildpush@v1.0
-    #   with:
-    #     registry_url: 'docker.io'
-    #     repository_name: 'hello-telemetry-tomcat-service'
-    #     user_name: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_TOKEN }}
-    #     image_version: 'latest'
-    #     docker_file: 'java-app'
-      
     - run: |
         ls -al
       
-    # - name: Build Python Docker Image
-    #   id: buildAndPushPythonImage
-    #   uses: MaximilianoBz/dockerhub-buildpush@v1.0
-    #   with:
-    #     registry_url: 'docker.io'
-    #     repository_name: 'hello-telemetry-python-service'
-    #     user_name: ${{ secrets.DOCKER_USERNAME }}
-    #     password: ${{ secrets.DOCKER_TOKEN }}
-    #     image_version: 'latest'
-    #     docker_file: 'python-service'
+    - name: Build Python Docker Image
+      id: buildAndPushPythonImage
+      uses: MaximilianoBz/dockerhub-buildpush@v1.0
+      with:
+        registry_url: 'docker.io'
+        repository_name: 'hello-telemetry-python-service'
+        user_name: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+        image_version: 'latest'
+        docker_file: 'python-service'
 
         
-         
+    - name: Apply Kubernetes manifests
+      run: |
+         kubectl version
+         kubectl apply -f python-service/manifest/
+         kubectl rollout restart deploy ht-python-service -n hello-telemetry         
