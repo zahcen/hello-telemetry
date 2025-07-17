@@ -6,7 +6,7 @@ RUN echo "Listing:" && ls -R .
 
 WORKDIR /app
 
-# List files to debug
+# List files to debug.
 RUN echo "Listing:" && ls -R .
 
 COPY java-app/pom.xml .
