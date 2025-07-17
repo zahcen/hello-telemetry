@@ -22,6 +22,7 @@ jobs:
       run: |
         echo "First command"
         ls -al
+        mvn --version
 
     - name: Build Java App Docker Image
       id: buildAndPushTomcatImage
