@@ -22,7 +22,6 @@ jobs:
       run: |
         echo "First command"
         ls -al
-        ls -al python-service/Dockerfile
               
     - name: Build Docker Image
       id: buildAndPushImage
