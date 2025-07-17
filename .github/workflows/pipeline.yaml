@@ -23,6 +23,7 @@ jobs:
         echo "First command"
         ls -al
         mvn --version
+        mvn clean package -DskipTests -f java-app/pom.xml
 
     - name: Build Java App Docker Image
       id: buildAndPushTomcatImage
