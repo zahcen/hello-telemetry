@@ -1,6 +1,6 @@
 # Stage 1: Build with Maven
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
-WORKDIR /app
+WORKDIR .
 COPY java-app/pom.xml .
 COPY java-app/src ./src
 RUN mvn clean package -DskipTests
