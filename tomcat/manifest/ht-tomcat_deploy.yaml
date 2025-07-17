@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ht-tomcat
+spec:
+  selector:
+    matchLabels:
+      app: ht-tomcat
+  template:
+    metadata:
+      labels:
+        app: ht-tomcat
+    spec:
+      containers:
+        - name: tomcat
+          image: ht-tomcat:latest
+          ports:
+            - containerPort: 8080
+            - containerPort: 9010
+            - containerPort: 1099
+          env:
+            - name: JAVA_OPTS
+              value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.rmi.port=1099 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
