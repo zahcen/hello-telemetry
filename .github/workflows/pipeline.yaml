@@ -51,7 +51,7 @@ jobs:
       run: |
          kubectl version
          kubectl apply -f java-app/manifest/
-         #kubectl rollout restart deploy ariba-simulator -n punchout
+         kubectl rollout restart deploy ht-tomcat -n hello-telemetry
 
     # - name: Build Java App Docker Image
     #   id: buildAndPushTomcatImage
