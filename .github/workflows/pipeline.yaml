@@ -35,6 +35,7 @@ jobs:
 
     - name: Build and push java-app Docker image
       run: |
+        ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
         docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:latest -f java-app/Dockerfile .
         docker push ${{ secrets.DOCKER_USERNAME }}/java-app:latest        
 
