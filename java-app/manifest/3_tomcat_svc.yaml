@@ -9,7 +9,14 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+      name: port_8080
+      protocol: TCP
     - port: 9010
       targetPort: 9010
+      name: port_9010
+      protocol: TCP
     - port: 1099
       targetPort: 1099
+      name: port_1099
+      protocol: TCP
+  type: ClusterIP
