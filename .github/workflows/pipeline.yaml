@@ -36,7 +36,8 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
         image_version: 'latest'
         docker_file: 'python-service/Dockerfile'
-        
+        docker_context: '.' 
+
     # - name: Setup kubectl
     #   uses: ThomasKliszowski/setup-kubectl@v1
     #   with:
