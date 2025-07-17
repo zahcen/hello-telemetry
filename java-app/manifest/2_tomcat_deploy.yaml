@@ -15,7 +15,7 @@ spec:
       containers:
         - name: tomcat
           imagePullPolicy: Always
-          image: zahcen/hello-telemetry-python-service:latest
+          image: zahcen/hello-telemetry-java-app:latest
           ports:
             - containerPort: 8080
             - containerPort: 9010

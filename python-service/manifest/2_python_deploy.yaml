@@ -15,7 +15,7 @@ spec:
       containers:
         - name: python-service
           imagePullPolicy: Always
-          image: ht-python-service:latest
+          image: zahcen/hello-telemetry-python-service:latest
           ports:
             - containerPort: 5000
           readinessProbe:
