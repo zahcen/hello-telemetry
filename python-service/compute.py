@@ -2,6 +2,11 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+
+@app.route('/')
+def health():
+    return 'OK', 200
+
 @app.route('/compute_average_age', methods=['POST'])
 def compute_average_age():  
 
