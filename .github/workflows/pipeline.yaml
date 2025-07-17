@@ -22,8 +22,9 @@ jobs:
       run: |
         echo "First command"
         ls -al
-        mvn --version
-        echo " clean"
+      
+    - name: Maven Package
+      run: |
         mvn clean package -DskipTests -f java-app/pom.xml
         echo "list files"
         ls -al
