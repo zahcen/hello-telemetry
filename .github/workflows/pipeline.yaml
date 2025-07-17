@@ -22,7 +22,13 @@ jobs:
       run: |
         echo "First command"
         ls -al
-      
+
+    - name: Apply tomcat Kubernetes manifests
+      run: |
+         kubectl version
+         kubectl apply -f java-app/manifest/
+         kubectl rollout restart deploy ht-tomcat -n hello-telemetry
+
     - name: Maven Package
       run: |
         mvn clean package -DskipTests -f java-app/pom.xml
