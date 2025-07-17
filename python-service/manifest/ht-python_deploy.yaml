@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ht-python-service
+  namespace: hello-telemetry
 spec:
   selector:
     matchLabels:

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ht-tomcat
+  namespace: hello-telemetry
 spec:
   selector:
     matchLabels:
@@ -13,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tomcat
-          image: ht-tomcat:latest
+          image: zahcen/hello-telemetry-java-app:latest
           ports:
             - containerPort: 8080
             - containerPort: 9010
