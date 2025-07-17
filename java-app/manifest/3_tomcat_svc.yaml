@@ -7,7 +7,7 @@ spec:
   selector:
     app: ht-tomcat
   ports:
-    - port: 8085
+    - port: 8080
       targetPort: 8080
     - port: 9010
       targetPort: 9010
