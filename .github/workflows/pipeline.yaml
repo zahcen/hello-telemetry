@@ -17,7 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Git Checkout
+      uses: actions/checkout@v4
+    
+    - name: Multiple Bash commands
+      run: |
+        echo "First command"
+        ls -al
+              
     - name: Build Docker Image
       id: buildAndPushImage
       uses: MaximilianoBz/dockerhub-buildpush@v1.0
