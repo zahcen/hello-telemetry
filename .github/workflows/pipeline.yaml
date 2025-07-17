@@ -23,8 +23,8 @@ jobs:
         echo "First command"
         ls -al
               
-    - name: Build Docker Image
-      id: buildAndPushImage
+    - name: Build Python Docker Image
+      id: buildAndPushPythonImage
       uses: MaximilianoBz/dockerhub-buildpush@v1.0
       with:
         registry_url: 'docker.io'
@@ -33,6 +33,17 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
         image_version: 'latest'
         docker_file: 'python-service'
+    
+    - name: Build Java App Docker Image
+      id: buildAndPushTomcatImage
+      uses: MaximilianoBz/dockerhub-buildpush@v1.0
+      with:
+        registry_url: 'docker.io'
+        repository_name: 'hello-telemetry-tomcat-service'
+        user_name: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+        image_version: 'latest'
+        docker_file: 'java-app'
     
     # - name: Setup kubectl
     #   uses: ThomasKliszowski/setup-kubectl@v1
