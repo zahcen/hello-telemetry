@@ -19,7 +19,7 @@ jobs:
       uses: MaximilianoBz/dockerhub-buildpush@v1.0
       with:
         registry_url: 'docker.io'
-        repository_name: 'ariba-simulator'
+        repository_name: 'hello-telemetry-python-service'
         user_name: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
         image_version: 'latest'
