@@ -10,6 +10,7 @@ on:
       - 'pipeline.yaml'
     branches: [ "main" ]
 
+
 jobs:
 
   build:
