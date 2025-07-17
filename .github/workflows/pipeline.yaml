@@ -3,13 +3,12 @@ name: Docker Image CI
 on:
   push:
     paths-ignore:
-      - 'pipeline.yaml'    
+      - '.github/workflowspipeline.yaml' 
     branches: [ "main" ]
   pull_request:
     paths-ignore:
-      - 'pipeline.yaml'
+      - '.github/workflowspipeline.yaml'
     branches: [ "main" ]
-
 
 jobs:
 
