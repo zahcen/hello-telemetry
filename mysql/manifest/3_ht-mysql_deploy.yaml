@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ht-mysql
+  namespace: hello-telemetry  
 spec:
   selector:
     matchLabels:
@@ -28,8 +29,8 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
-            - name: initdb
-              mountPath: /docker-entrypoint-initdb.d
+            # - name: initdb
+            #   mountPath: /docker-entrypoint-initdb.d
           readinessProbe:
             exec:
               command:
@@ -43,7 +44,7 @@ spec:
         - name: mysql-data
           persistentVolumeClaim:
             claimName: mysql-pvc
-        - name: initdb
-          hostPath:
-            path: ./initdb
-            type: Directory
+        # - name: initdb
+        #   hostPath:
+        #     path: ./initdb
+        #     type: Directory

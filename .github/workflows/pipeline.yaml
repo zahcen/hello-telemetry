@@ -23,6 +23,16 @@ jobs:
         echo "First command"
         ls -al
 
+    - name: Setup kubectl
+      uses: ThomasKliszowski/setup-kubectl@v1
+      with:
+         # Base64 encoded kube config
+         kube-config: ${{ secrets.KUBECONFIG_DATA }}
+    
+    - name: Apply mysql Kubernetes manifests
+      run: |
+         kubectl apply -f mysql/manifest/
+
     - name: Maven Package
       run: |
         mvn clean package -DskipTests -f java-app/pom.xml
@@ -40,22 +50,11 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest -f java-app/Dockerfile .
         docker push ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest        
 
-    
-    - name: Setup kubectl
-      uses: ThomasKliszowski/setup-kubectl@v1
-      with:
-         # Base64 encoded kube config
-         kube-config: ${{ secrets.KUBECONFIG_DATA }}
-
     - name: Apply tomcat Kubernetes manifests
       run: |
-         kubectl version
          kubectl apply -f java-app/manifest/
          kubectl rollout restart deploy ht-tomcat -n hello-telemetry
 
-    - run: |
-        ls -al
-      
     - name: Build Python Docker Image
       id: buildAndPushPythonImage
       uses: MaximilianoBz/dockerhub-buildpush@v1.0
