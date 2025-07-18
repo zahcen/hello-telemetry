@@ -6,6 +6,9 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+  storageClassName: standard
+  volumeMode: Filesystem
+  volumeName: mysql-pv 
   resources:
     requests:
       storage: 1Gi
