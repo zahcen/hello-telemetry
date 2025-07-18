@@ -103,6 +103,7 @@ public class MyServlet extends HttpServlet {
         // Make a request to the Python microservice
         String averageAge = getAverageAge(dataList);
         out.println("<h2>Average Age: " + averageAge + "</h2>");
+        out.println("<a href=""/MyWebApp/"">Home Page</a>");
         out.println("</body></html>");
 
     }
