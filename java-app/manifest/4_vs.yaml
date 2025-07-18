@@ -13,4 +13,4 @@ spec:
     - destination:
         host: ht-tomcat-svc.hello-telemetry.svc.cluster.local
         port:
-          number: 80
+          number: 8080
