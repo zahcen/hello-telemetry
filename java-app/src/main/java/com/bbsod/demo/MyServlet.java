@@ -50,10 +50,9 @@ public class MyServlet extends HttpServlet {
 
         // JDBC connection parameters
         String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
+        jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase";
         String jdbcUser = "myuser";
         String jdbcPassword = "mypassword";
-
-
         try {
             // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
