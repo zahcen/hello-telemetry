@@ -57,7 +57,7 @@ public class MyServlet extends HttpServlet {
             System.out.println("Load MySQL JDBC Driver");
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            System.out.println("Establish connection");
+            System.out.println("Establish connection using:"+jdbcUrl);
             Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
                     jdbcPassword);
 
