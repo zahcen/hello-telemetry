@@ -49,7 +49,7 @@ public class MyServlet extends HttpServlet {
         // Establish database connection and get data
 
         // JDBC connection parameters
-        String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase";
+        String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
         String jdbcUser = "myuser";
         String jdbcPassword = "mypassword";
 
