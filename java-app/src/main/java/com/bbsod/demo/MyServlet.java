@@ -54,10 +54,10 @@ public class MyServlet extends HttpServlet {
         String jdbcUser = "myuser";
         String jdbcPassword = "mypassword";
         try {
-            // Load MySQL JDBC Driver
+            System.out.println("Load MySQL JDBC Driver");
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Establish connection
+            System.out.println("Establish connection");
             Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
                     jdbcPassword);
 
