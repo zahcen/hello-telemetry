@@ -53,6 +53,7 @@ public class MyServlet extends HttpServlet {
         String jdbcUser = "myuser";
         String jdbcPassword = "mypassword";
 
+
         try {
             // Load MySQL JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
