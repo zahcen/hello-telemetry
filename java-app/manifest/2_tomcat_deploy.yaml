@@ -28,7 +28,7 @@ spec:
                       -Dcom.sun.management.jmxremote.ssl=false \
                       -Djava.rmi.server.hostname=localhost \
                       -javaagent:/opt/elastic-otel-javaagent-1.5.0.jar \
-                      -Dotel.exporter.otlp.endpoint= \
+                      -Dotel.exporter.otlp.endpoint=http://apm-server-apm-server.elastic-apm.svc.cluster.local:8200 \
                       -Dotel.exporter.otlp.headers=\"Authorization=Bearer QzQ1RW5aZ0IxTlZyZDFWU1Q4S3M6bGtZa2dyaEtUU2FzcTFSUVhsVl9aQQ==\" \
                       -Dotel.javaagent.debug=true \
                       -Dotel.logs.exporter=otlp \

@@ -4,4 +4,4 @@ kind: Namespace
 metadata:
   name: hello-telemetry
   labels:
-    istio-injection: enabled
+    istio-injection: disabled
