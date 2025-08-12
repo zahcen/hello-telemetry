@@ -35,6 +35,7 @@ spec:
                       -Dotel.metrics.exporter=otlp \
                       -Dotel.resource.attributes= service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV \
                       -Dotel.traces.exporter=otlp"
+          
           readinessProbe:
             httpGet:
               path: /MyWebApp/
