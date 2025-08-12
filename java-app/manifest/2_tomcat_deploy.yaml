@@ -22,19 +22,15 @@ spec:
             - containerPort: 1099
           env:
             - name: JAVA_OPTS
-              value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 \
-                      -Dcom.sun.management.jmxremote.rmi.port=1099 \
-                      -Dcom.sun.management.jmxremote.authenticate=false \
-                      -Dcom.sun.management.jmxremote.ssl=false \
-                      -Djava.rmi.server.hostname=localhost \
-                      -javaagent:/opt/elastic-otel-javaagent-1.5.0.jar \
-                      -Dotel.exporter.otlp.endpoint=http://apm-server-apm-server.elastic-apm.svc.cluster.local:8200 \
-                      -Dotel.exporter.otlp.headers=\"Authorization=Bearer QzQ1RW5aZ0IxTlZyZDFWU1Q4S3M6bGtZa2dyaEtUU2FzcTFSUVhsVl9aQQ==\" \
-                      -Dotel.javaagent.debug=true \
-                      -Dotel.logs.exporter=otlp \
-                      -Dotel.metrics.exporter=otlp \
-                      -Dotel.resource.attributes= service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV \
-                      -Dotel.traces.exporter=otlp"
+              value: >-
+                      -javaagent:/opt/elastic-otel-javaagent-1.5.0.jar
+                      -Dotel.exporter.otlp.endpoint=http://apm-server-apm-server.elastic-apm.svc.cluster.local:8200
+                      -Dotel.exporter.otlp.headers="Authorization=Bearer QzQ1RW5aZ0IxTlZyZDFWU1Q4S3M6bGtZa2dyaEtUU2FzcTFSUVhsVl9aQQ=="
+                      -Dotel.javaagent.debug=true
+                      -Dotel.logs.exporter=otlp
+                      -Dotel.metrics.exporter=otlp
+                      -Dotel.resource.attributes="service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV"
+                      -Dotel.traces.exporter=otlp
           
           readinessProbe:
             httpGet:
