@@ -13,7 +13,7 @@ spec:
       labels:
         app: node-app
         version: "0.5"
-      anotations:
+      annotations:
         instrumentation.opentelemetry.io/inject-nodejs: "observability/obs-instrumentation"
     spec:
       containers:
