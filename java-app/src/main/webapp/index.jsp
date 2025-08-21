@@ -10,6 +10,7 @@
     serverUrl: '<apm-server-url>',
   })
 </script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,5 +32,22 @@
 <body>
     <h1>Welcome to hello-telemetry Application</h1>
     <a href="results">View Database Results</a>
+
+    <form id="orderForm" method="post" action="order"></form>    
+    <button onclick="document.getElementById('orderForm').submit()">Create Order</button>
+
+    <%
+        String orderId = request.getParameter("order_id");
+        String orderCount = request.getParameter("order_count");
+
+        if (orderId != null && orderCount != null) {
+    %>
+        <h2>Order Created Successfully!</h2>
+        <p><strong>Order ID:</strong> <%= orderId %></p>
+        <p><strong>Total Orders Count:</strong> <%= orderCount %></p>
+    <%
+        }
+    %>
+
 </body>
 </html>

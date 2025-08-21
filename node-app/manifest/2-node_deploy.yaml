@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+  namespace: hello-telemetry
+spec:
+  selector:
+    matchLabels:
+      app: node-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: node-app
+        version: "0.5"
+      anotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "observability/obs-instrumentation"
+    spec:
+      containers:
+      - name: node-app-container
+        image: zahcen/hello-telemetry-node-app:latest
+        ports:
+        - containerPort: 3000
+      imagePullSecrets:
+      - name: dockerhub-secret
