@@ -1,12 +1,12 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
 
+// Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json()); // Replaces body-parser.json()
 
 let orderCount = 0;
 
@@ -26,6 +26,7 @@ app.post("/order", (req, res) => {
     });
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`Node.js Order API running on http://localhost:${PORT}`);
 });
