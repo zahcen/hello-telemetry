@@ -32,7 +32,8 @@
 <body>
     <h1>Welcome to hello-telemetry Application</h1>
     <a href="results">View Database Results</a>
-
+    <br/>
+    <br/>
     <form id="orderForm" method="post" action="order"></form>    
     <button onclick="document.getElementById('orderForm').submit()">Create Order</button>
 
