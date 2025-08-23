@@ -7,9 +7,7 @@
 <script>
   elasticApm.init({
     serviceName: 'hello-telemetry',
-    serverUrl: 'https://apmserver.zitaconseil.fr',
-    secretToken: 'Bearer KA9Q7p471Wx0S49kSP81RoyO',
-    authorization: 'Bearer KA9Q7p471Wx0S49kSP81RoyO'
+    serverUrl: 'https://apmserver.zitaconseil.fr'
   })
 </script>
 
