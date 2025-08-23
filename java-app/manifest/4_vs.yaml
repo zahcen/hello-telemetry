@@ -5,7 +5,7 @@ metadata:
   namespace: hello-telemetry
 spec:
   gateways:
-  - istio-system/cert-manager-gateway
+  - istio-system/digital-factory-tls-gateway
   hosts:
   - ht.zitaconseil.fr
   http:

@@ -28,7 +28,24 @@ jobs:
       with:
          # Base64 encoded kube config
          kube-config: ${{ secrets.KUBECONFIG_DATA }}
-    
+
+    - name: Build Nodejs Docker Image
+      id: buildAndPushNodejsImage
+      uses: MaximilianoBz/dockerhub-buildpush@v1.0
+      with:
+        registry_url: 'docker.io'
+        repository_name: 'hello-telemetry-node-app'
+        user_name: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+        image_version: 'latest'
+        docker_file: 'node-app'
+
+
+    - name: Apply Nodejs Kubernetes manifests
+      run: |
+         kubectl apply -f node-app/manifest/
+         kubectl rollout restart deploy node-app -n hello-telemetry         
+         
     - name: Apply mysql Kubernetes manifests
       run: |
          kubectl apply -f mysql/manifest/
@@ -66,9 +83,8 @@ jobs:
         image_version: 'latest'
         docker_file: 'python-service'
 
-        
-    - name: Apply Kubernetes manifests
+    - name: Apply Python Kubernetes manifests
       run: |
-         kubectl version
          kubectl apply -f python-service/manifest/
          kubectl rollout restart deploy ht-python-service -n hello-telemetry         
+        
