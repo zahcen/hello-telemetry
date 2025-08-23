@@ -7,7 +7,7 @@
 <script>
   elasticApm.init({
     serviceName: 'hello-telemetry',
-    serverUrl: '<apm-server-url>',
+    serverUrl: 'apmserver.zitaconseil.fr',
   })
 </script>
     <style>
@@ -31,5 +31,6 @@
 <body>
     <h1>Welcome to hello-telemetry Application</h1>
     <a href="results">View Database Results</a>
+    
 </body>
 </html>
