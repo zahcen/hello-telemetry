@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
+    <script src="/MyWebApp/metrics.js"></script>
 <!--script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script-->
 <script>
   elasticApm.init({
