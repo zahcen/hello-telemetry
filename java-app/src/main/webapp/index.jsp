@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
-<script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script>
+<!--script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script-->
 <script>
   elasticApm.init({
     serviceName: 'hello-telemetry',
-    serverUrl: 'https://apmserver.zitaconseil.fr'
+    serverUrl: '/metrics-api',
+    serverUrlPrefix: '/'
   })
 </script>
 
