@@ -11,6 +11,7 @@
     serverUrl: '/metrics-api',
     serverUrlPrefix: '/'
   })
+  
 </script>
     <style>
         body {
