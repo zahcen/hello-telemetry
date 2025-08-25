@@ -49,6 +49,34 @@
             <version>20240303</version>
         </dependency>
 
+    <!-- OpenTelemetry SDK -->
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-sdk</artifactId>
+        <version>1.39.0</version>
+    </dependency>
+
+    <!-- OpenTelemetry API -->
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-api</artifactId>
+        <version>1.39.0</version>
+    </dependency>
+
+    <!-- OTLP Exporter (for sending traces to your collector) -->
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-exporter-otlp</artifactId>
+        <version>1.39.0</version>
+    </dependency>
+
+    <!-- Optional: Logging (to debug spans locally) -->
+    <dependency>
+        <groupId>io.opentelemetry</groupId>
+        <artifactId>opentelemetry-exporter-logging</artifactId>
+        <version>1.39.0</version>
+    </dependency>
+
     </dependencies>
 
     <build>
