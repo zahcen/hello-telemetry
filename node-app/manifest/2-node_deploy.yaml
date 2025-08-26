@@ -14,7 +14,7 @@ spec:
         app: node-app
         version: "0.5"
       annotations:
-        instrumentation.opentelemetry.io/inject-nodejs: "observability/obs-instrumentation"
+        instrumentation.opentelemetry.io/inject-nodejs: "observability/otel-instrumentation"
     spec:
       containers:
       - name: node-app-container

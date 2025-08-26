@@ -17,8 +17,8 @@ spec:
         app: ht-tomcat
         ver: "1.0"
         version: "2.0"
-#      annotations:
-#        instrumentation.opentelemetry.io/inject-java: "observability/obs-instrumentation"
+      annotations:
+       instrumentation.opentelemetry.io/inject-java: "observability/otel-instrumentation"
 
     spec:
       containers:
@@ -32,17 +32,17 @@ spec:
           env:
             - name: NODEJS_ORDER_URL
               value: "http://node-app-service:3000/order"
-            - name: JAVA_OPTS
-              value: >-
-                      -javaagent:/usr/local/tomcat/lib/opentelemetry-javaagent.jar
-                      -Dotel.exporter.otlp.endpoint=http://otel-collector-collector.observability.svc.cluster.local:4317
-                      -Dotel.javaagent.debug=true
-                      -Dotel_exporter_otlp_insecure=true
-                      -Dotel.logs.exporter=otlp
-                      -Dotel.metrics.exporter=otlp
-                      -Dotel.resource.attributes="service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV"
-                      -Dotel.traces.exporter=otlp
-                      -Dotel.exporter.otlp.insecure=true
+            # - name: JAVA_OPTS
+            #   value: >-
+            #           -javaagent:/usr/local/tomcat/lib/opentelemetry-javaagent.jar
+            #           -Dotel.exporter.otlp.endpoint=http://otel-collector-collector.observability.svc.cluster.local:4318
+            #           -Dotel.javaagent.debug=true
+            #           -Dotel_exporter_otlp_insecure=true
+            #           -Dotel.logs.exporter=otlp
+            #           -Dotel.metrics.exporter=otlp
+            #           -Dotel.resource.attributes="service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV"
+            #           -Dotel.traces.exporter=otlp
+            #           -Dotel.exporter.otlp.insecure=true
           
           readinessProbe:
             httpGet:
