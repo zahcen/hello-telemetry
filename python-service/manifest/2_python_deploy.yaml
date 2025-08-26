@@ -23,11 +23,11 @@ spec:
           image: zahcen/hello-telemetry-python-service:latest
           ports:
             - containerPort: 5000
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 5000
-            initialDelaySeconds: 5
-            periodSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 5000
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5
       imagePullSecrets:
         - name: dockerhub-secret

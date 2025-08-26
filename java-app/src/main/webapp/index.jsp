@@ -7,7 +7,7 @@
 <!--script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script-->
 <script>
   elasticApm.init({
-    serviceName: 'hello-telemetry',
+    serviceName: 'open-telemetry-test',
     serverUrl: '/metrics-api',
     serverUrlPrefix: '/'
   })
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to hello-telemetry Application</h1>
+    <h1>Welcome to Open-Telemetry Test Application</h1>
     <a href="results">View Database Results</a>
     <br/>
     <br/>

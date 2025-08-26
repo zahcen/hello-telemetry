@@ -44,11 +44,11 @@ spec:
             #           -Dotel.traces.exporter=otlp
             #           -Dotel.exporter.otlp.insecure=true
           
-          readinessProbe:
-            httpGet:
-              path: /MyWebApp/
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /MyWebApp/
+          #     port: 8080
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
       imagePullSecrets:
         - name: dockerhub-secret
