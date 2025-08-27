@@ -82,13 +82,13 @@ public class MyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Span span = tracer.spanBuilder("custom.db.query").startSpan();
+        //Span span = tracer.spanBuilder("custom.db.query").startSpan();
         List<JSONObject> dataList = new ArrayList<>();
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
 
         // Create a new ParentSpan
-        Span parentSpan = tracer.spanBuilder("GET").setNoParent().startSpan();
+        Span parentSpan = tracer.spanBuilder("GET DB Results").setNoParent().startSpan();
         parentSpan.makeCurrent();
         
         // Sleep for 2 seconds
@@ -178,7 +178,7 @@ public class MyServlet extends HttpServlet {
         out.println("<h2>Average Age: " + averageAge + "</h2>");
         out.println("<a href='/MyWebApp/'>Home Page</a>");
         out.println("</body></html>");
-        span.end();
+        //span.end();
         // Increment the request counter 
 
     }
