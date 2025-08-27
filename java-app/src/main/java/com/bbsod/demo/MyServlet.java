@@ -98,21 +98,18 @@ public class MyServlet extends HttpServlet {
                 .setSpanKind(SpanKind.INTERNAL)
                 .setParent(parentContext)
                 .startSpan();
-        slow_method();            
+        
+        
+        slow_method();
+
         sleepSpan.end();
         
 
         requestCounter.add(1);
-        // Sleep for 2 seconds
-        // try {
-        //     Thread.sleep(2000);
-        // } catch (InterruptedException e) {
-        //     e.printStackTrace();
-        // }
 
+        
         // Establish database connection and get data
-
-        Span dbSpan = tracer.spanBuilder("DatabaseConnection")
+        Span dbSpan = tracer.spanBuilder("Establish database connection and get data")
                 .setSpanKind(SpanKind.CLIENT)
                 .setParent(parentContext)
                 .startSpan();
@@ -171,13 +168,23 @@ public class MyServlet extends HttpServlet {
             dbSpan.end();
         }
         
-        parentSpan.end();
 
+        Span pythonSpan = tracer.spanBuilder("Make a request to the Python microservice")
+                .setSpanKind(SpanKind.CLIENT)
+                .setParent(parentContext)
+                .startSpan();
+        
         // Make a request to the Python microservice
         String averageAge = getAverageAge(dataList);
+
+        pythonSpan.end();
+        // Display the average age
         out.println("<h2>Average Age: " + averageAge + "</h2>");
         out.println("<a href='/MyWebApp/'>Home Page</a>");
         out.println("</body></html>");
+        
+        parentSpan.end();
+
         //span.end();
         // Increment the request counter 
 
