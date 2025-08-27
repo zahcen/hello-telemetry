@@ -88,13 +88,13 @@ public class MyServlet extends HttpServlet {
         response.setContentType("text/html");
 
         // Create a new ParentSpan
-        Span parentSpan = tracer.spanBuilder("GET DB Results").setNoParent().startSpan();
+        Span parentSpan = tracer.spanBuilder("GET_DB_Results").setNoParent().startSpan();
         parentSpan.makeCurrent();
         
         // Sleep for 2 seconds
         // Span to capture sleep
         parentContext = Context.current().with(parentSpan);
-        Span sleepSpan = tracer.spanBuilder("Call slow_method")
+        Span sleepSpan = tracer.spanBuilder("Call_slow_method")
                 .setSpanKind(SpanKind.INTERNAL)
                 .setParent(parentContext)
                 .startSpan();
@@ -109,7 +109,7 @@ public class MyServlet extends HttpServlet {
 
         
         // Establish database connection and get data
-        Span dbSpan = tracer.spanBuilder("Establish database connection and get data")
+        Span dbSpan = tracer.spanBuilder("Establish_db_connection")
                 .setSpanKind(SpanKind.CLIENT)
                 .setParent(parentContext)
                 .startSpan();
@@ -169,7 +169,7 @@ public class MyServlet extends HttpServlet {
         }
         
 
-        Span pythonSpan = tracer.spanBuilder("Make a request to the Python microservice")
+        Span pythonSpan = tracer.spanBuilder("Call_Python_Microservice")
                 .setSpanKind(SpanKind.CLIENT)
                 .setParent(parentContext)
                 .startSpan();
