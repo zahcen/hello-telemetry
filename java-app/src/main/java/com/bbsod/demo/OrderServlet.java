@@ -31,10 +31,22 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.context.Scope;
+
 public class OrderServlet extends HttpServlet {
+
+    private static final Tracer tracer =
+        GlobalOpenTelemetry.getTracer("Order");
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+
+        Span span = tracer.spanBuilder("create_order").startSpan();
+        span.setAttribute("component", "PaymentService");
+        span.setAttribute("status", "OK");
 
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
         String nodeJsUrl = System.getenv("NODEJS_ORDER_URL");
@@ -66,7 +78,8 @@ public class OrderServlet extends HttpServlet {
         String orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
         String orderCount = json.replaceAll(".*\"order_count\":(\\d+).*", "$1");
         System.out.println("orderCount="+orderCount);
-
+        span.setAttribute("order.id", orderId);
+        span.end();
         // Redirect back to JSP with parameters
         response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&order_count=" + orderCount);
     }

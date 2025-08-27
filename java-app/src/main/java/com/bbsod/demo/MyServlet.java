@@ -61,6 +61,15 @@ public class MyServlet extends HttpServlet {
         this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);        
     }
 
+    private void slow_method(){
+        // Sleep for 2 seconds
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -70,13 +79,15 @@ public class MyServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
 
-        // Sleep for 2 seconds
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        slow_method();
         requestCounter.add(1);
+        // Sleep for 2 seconds
+        // try {
+        //     Thread.sleep(2000);
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
+
         // Establish database connection and get data
 
         // JDBC connection parameters

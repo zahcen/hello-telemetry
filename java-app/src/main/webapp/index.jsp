@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
-<script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script>
+    <script src="/MyWebApp/metrics.js"></script>
+<!--script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script-->
 <script>
   elasticApm.init({
+<<<<<<< HEAD
     serviceName: 'hello-telemetry',
     serverUrl: '/apm-server'
+=======
+    serviceName: 'open-telemetry-test',
+    serverUrl: '/metrics-api',
+    serverUrlPrefix: '/'
+>>>>>>> 5177ad792838583231e22c9d831150de418cf015
   })
+  
 </script>
-
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,7 +37,7 @@
     </style>
 </head>
 <body>
-    <h1>Welcome to hello-telemetry Application</h1>
+    <h1>Welcome to Open-Telemetry Test Application</h1>
     <a href="results">View Database Results</a>
     <br/>
     <br/>

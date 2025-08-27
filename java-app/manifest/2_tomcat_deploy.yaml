@@ -1,3 +1,7 @@
+# -Dotel.exporter.otlp.endpoint=http://apm-server-apm-server.elastic-apm.svc.cluster.local:8200                         
+# -Dotel.exporter.otlp.headers="Authorization=Bearer UFhLUG9wZ0JHdEdHX2NHMmdHMmY6U0ZURkdUU1VSVUtwWDZlZGZiUjFHZw=="
+# -javaagent:/usr/local/tomcat/lib/elastic-otel-javaagent-1.5.0.jar
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,7 +18,7 @@ spec:
         ver: "1.0"
         version: "2.0"
       annotations:
-        instrumentation.opentelemetry.io/inject-java: "observability/obs-instrumentation"
+       instrumentation.opentelemetry.io/inject-java: "observability/otel-instrumentation"
 
     spec:
       containers:
@@ -28,23 +32,23 @@ spec:
           env:
             - name: NODEJS_ORDER_URL
               value: "http://node-app-service:3000/order"
-          #   - name: JAVA_OPTS
-          #     value: >-
-          #             -javaagent:/usr/local/tomcat/lib/elastic-otel-javaagent-1.5.0.jar
-          #             -Dotel.exporter.otlp.endpoint=http://apm-server-apm-server.elastic-apm.svc.cluster.local:8200                         
-          #             -Dotel.exporter.otlp.headers="Authorization=Bearer UFhLUG9wZ0JHdEdHX2NHMmdHMmY6U0ZURkdUU1VSVUtwWDZlZGZiUjFHZw=="
-          #             -Dotel.javaagent.debug=true
-          #             -Dotel_exporter_otlp_insecure=true
-          #             -Dotel.logs.exporter=otlp
-          #             -Dotel.metrics.exporter=otlp
-          #             -Dotel.resource.attributes="service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV"
-          #             -Dotel.traces.exporter=otlp
+            # - name: JAVA_OPTS
+            #   value: >-
+            #           -javaagent:/usr/local/tomcat/lib/opentelemetry-javaagent.jar
+            #           -Dotel.exporter.otlp.endpoint=http://otel-collector-collector.observability.svc.cluster.local:4318
+            #           -Dotel.javaagent.debug=true
+            #           -Dotel_exporter_otlp_insecure=true
+            #           -Dotel.logs.exporter=otlp
+            #           -Dotel.metrics.exporter=otlp
+            #           -Dotel.resource.attributes="service.name=tomcat-app-1,service.version=1.0.0,deployment.environment=DEV"
+            #           -Dotel.traces.exporter=otlp
+            #           -Dotel.exporter.otlp.insecure=true
           
-          readinessProbe:
-            httpGet:
-              path: /MyWebApp/
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
+          # readinessProbe:
+          #   httpGet:
+          #     path: /MyWebApp/
+          #     port: 8080
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 5
       imagePullSecrets:
         - name: dockerhub-secret

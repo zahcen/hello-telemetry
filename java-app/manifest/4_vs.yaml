@@ -9,6 +9,17 @@ spec:
   hosts:
   - ht.zitaconseil.fr
   http:
+  - match:
+    - uri:
+        prefix: /metrics-api/
+    name: apmserver
+    rewrite:
+      uri: /intake/v2/rum/events
+    route:
+    - destination:
+        host: apm-server-apm-http.elastic-system.svc.cluster.local
+        port:
+          number: 8200
   - route:
     - destination:
         host: ht-tomcat-svc.hello-telemetry.svc.cluster.local
