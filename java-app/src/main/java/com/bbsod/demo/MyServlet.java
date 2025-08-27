@@ -30,6 +30,8 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.metrics.SdkMeterProvider;
 import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
 import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 // OpenTelemetry API
 import io.opentelemetry.api.OpenTelemetry;
@@ -38,9 +40,14 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
-
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 
 public class MyServlet extends HttpServlet {
 
@@ -48,6 +55,7 @@ public class MyServlet extends HttpServlet {
     private final Meter meter;
     private final LongCounter requestCounter;
     private final Tracer tracer;
+    Context parentContext;
 
     // Constructor
     public MyServlet() {
@@ -79,7 +87,27 @@ public class MyServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
 
-        slow_method();
+        // Create a new ParentSpan
+        Span parentSpan = tracer.spanBuilder("GET").setNoParent().startSpan();
+        parentSpan.makeCurrent();
+
+        //slow_method();
+        
+        // Sleep for 2 seconds
+        // Span to capture sleep
+        parentContext = Context.current().with(parentSpan);
+        Span sleepSpan = tracer.spanBuilder("SleepForTwoSeconds")
+                .setSpanKind(SpanKind.INTERNAL)
+                .setParent(parentContext)
+                .startSpan();
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            sleepSpan.end();
+        }
+
         requestCounter.add(1);
         // Sleep for 2 seconds
         // try {
@@ -89,6 +117,11 @@ public class MyServlet extends HttpServlet {
         // }
 
         // Establish database connection and get data
+
+        Span dbSpan = tracer.spanBuilder("DatabaseConnection")
+                .setSpanKind(SpanKind.CLIENT)
+                .setParent(parentContext)
+                .startSpan();
 
         // JDBC connection parameters
         String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
@@ -140,7 +173,11 @@ public class MyServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             out.println("<h2>Error: " + e.getMessage() + "</h2>");
+        }finally {
+            dbSpan.end();
         }
+        
+        parentSpan.end();
 
         // Make a request to the Python microservice
         String averageAge = getAverageAge(dataList);
