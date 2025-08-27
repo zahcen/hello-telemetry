@@ -51,11 +51,11 @@ public class MyServlet extends HttpServlet {
         slow_method();
 
         // Sleep for 2 seconds
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     Thread.sleep(2000);
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
 
         // Establish database connection and get data
 
