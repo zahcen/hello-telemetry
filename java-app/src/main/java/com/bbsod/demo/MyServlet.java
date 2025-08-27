@@ -90,22 +90,16 @@ public class MyServlet extends HttpServlet {
         // Create a new ParentSpan
         Span parentSpan = tracer.spanBuilder("GET").setNoParent().startSpan();
         parentSpan.makeCurrent();
-
-        //slow_method();
         
         // Sleep for 2 seconds
         // Span to capture sleep
         parentContext = Context.current().with(parentSpan);
-        Span sleepSpan = tracer.spanBuilder("SleepForTwoSeconds")
+        Span sleepSpan = tracer.spanBuilder("Call slow_method")
                 .setSpanKind(SpanKind.INTERNAL)
                 .setParent(parentContext)
                 .startSpan();
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            sleepSpan.end();
+        slow_method();            
+        sleepSpan.end();
         }
 
         requestCounter.add(1);
