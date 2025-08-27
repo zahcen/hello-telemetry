@@ -88,7 +88,7 @@ public class MyServlet extends HttpServlet {
         response.setContentType("text/html");
 
         // Create a new ParentSpan
-        Span parentSpan = tracer.spanBuilder("GET_DB_Results").setNoParent().startSpan();
+        Span parentSpan = tracer.spanBuilder("getdbresults").setNoParent().startSpan();
         parentSpan.makeCurrent();
         
         // Sleep for 2 seconds
