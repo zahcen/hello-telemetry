@@ -100,7 +100,7 @@ public class MyServlet extends HttpServlet {
                 .startSpan();
         slow_method();            
         sleepSpan.end();
-        }
+        
 
         requestCounter.add(1);
         // Sleep for 2 seconds
