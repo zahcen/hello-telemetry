@@ -31,6 +31,15 @@ public class MyServlet extends HttpServlet {
     public MyServlet() {
     }
 
+    private void slow_method(){
+        // Sleep for 2 seconds
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,6 +47,8 @@ public class MyServlet extends HttpServlet {
         List<JSONObject> dataList = new ArrayList<>();
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
+
+        slow_method();
 
         // Sleep for 2 seconds
         try {
