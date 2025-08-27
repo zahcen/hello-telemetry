@@ -7,7 +7,7 @@
 <script>
   elasticApm.init({
     serviceName: 'hello-telemetry',
-    serverUrl: 'https://apmserver.zitaconseil.fr'
+    serverUrl: '/apm-server'
   })
 </script>
 
@@ -38,6 +38,7 @@
     <button onclick="document.getElementById('orderForm').submit()">Create Order</button>
 
     <%
+        // serverUrl: 'https://apmserver.zitaconseil.fr'
         String orderId = request.getParameter("order_id");
         String orderCount = request.getParameter("order_count");
 

@@ -25,16 +25,47 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+// OpenTelemetry SDK
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.metrics.SdkMeterProvider;
+import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
+import io.opentelemetry.sdk.resources.Resource;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+// OpenTelemetry API
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
+
+
 public class MyServlet extends HttpServlet {
+
+    private static final String INSTRUMENTATION_NAME = MyServlet.class.getName();
+    private final Meter meter;
+    private final LongCounter requestCounter;
+    private final Tracer tracer;
 
     // Constructor
     public MyServlet() {
+        
+        // Reuse OpenTelemetry instance from the auto-injected agent
+        OpenTelemetry openTelemetry = GlobalOpenTelemetry.get();
+        this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
+        this.requestCounter = meter.counterBuilder("app.db.db_requests")
+                .setDescription("Count DB requests")
+                .build();
+        this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);        
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        Span span = tracer.spanBuilder("custom.db.query").startSpan();
         List<JSONObject> dataList = new ArrayList<>();
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
@@ -45,7 +76,7 @@ public class MyServlet extends HttpServlet {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        requestCounter.add(1);
         // Establish database connection and get data
 
         // JDBC connection parameters
@@ -105,6 +136,8 @@ public class MyServlet extends HttpServlet {
         out.println("<h2>Average Age: " + averageAge + "</h2>");
         out.println("<a href='/MyWebApp/'>Home Page</a>");
         out.println("</body></html>");
+        span.end();
+        // Increment the request counter 
 
     }
 
