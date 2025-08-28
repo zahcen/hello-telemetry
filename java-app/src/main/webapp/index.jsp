@@ -3,20 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
-    <script src="/MyWebApp/metrics.js"></script>
-<!--script src="https://unpkg.com/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js" crossorigin></script-->
-<script>
-  elasticApm.init({
-<<<<<<< HEAD
-    serviceName: 'hello-telemetry',
-    serverUrl: '/apm-server'
-=======
-    serviceName: 'open-telemetry-test',
-    serverUrl: '/metrics-api',
-    serverUrlPrefix: '/'
->>>>>>> 5177ad792838583231e22c9d831150de418cf015
-  })
-  
 </script>
     <style>
         body {
