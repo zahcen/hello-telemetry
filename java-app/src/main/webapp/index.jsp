@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
+    
 </script>
     <style>
         body {
