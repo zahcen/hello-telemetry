@@ -25,7 +25,7 @@ public class OrderMetrics {
         // Record a new order with attributes
         ordersCounter.add(1, Attributes.of(
                 AttributeKey.stringKey("customer_id"), customerId,
-                AttributeKey.doubleKey("amount"), amount
+                AttributeKey.doubleKey("order_amount"), amount
         ));
     }
 }

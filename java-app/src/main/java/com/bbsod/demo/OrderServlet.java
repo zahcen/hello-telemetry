@@ -85,7 +85,7 @@ public class OrderServlet extends HttpServlet {
         String customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
         System.out.println("customerId="+customerId); 
 
-        String amount = json.replaceAll(".*\"order_amount\":(\\d+).*", "$1");
+        String amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
         System.out.println("amount="+amount);
 
         // Record metrics
