@@ -25,29 +25,19 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-// OpenTelemetry SDK
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.metrics.SdkMeterProvider;
-import io.opentelemetry.sdk.metrics.export.PeriodicMetricReader;
-import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.api.GlobalOpenTelemetry;
+
 // OpenTelemetry API
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.common.AttributeKey;
-import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.context.Scope;
-import io.opentelemetry.context.propagation.TextMapPropagator;
-import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+
+//import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+
 
 public class MyServlet extends HttpServlet {
 
@@ -56,17 +46,24 @@ public class MyServlet extends HttpServlet {
     private final LongCounter requestCounter;
     private final Tracer tracer;
     Context parentContext;
+    
 
     // Constructor
     public MyServlet() {
         
         // Reuse OpenTelemetry instance from the auto-injected agent
         OpenTelemetry openTelemetry = GlobalOpenTelemetry.get();
+        
         this.meter = openTelemetry.getMeter(INSTRUMENTATION_NAME);
+        
         this.requestCounter = meter.counterBuilder("app.db.db_requests")
                 .setDescription("Count DB requests")
                 .build();
-        this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);        
+        
+        this.tracer = openTelemetry.getTracer(INSTRUMENTATION_NAME);
+        
+        //Meter orderMmeter = GlobalOpenTelemetry.getMeter("orders-counter-meter");
+  
     }
 
     private void slow_method(){

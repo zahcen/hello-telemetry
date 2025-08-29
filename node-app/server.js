@@ -19,10 +19,12 @@ function generateOrderId() {
 app.post("/order", (req, res) => {
     orderCount++;
     const orderId = generateOrderId();
-
+    const customerId= generateOrderId();
+    const amount= (Math.random() * (500 - 10) + 10).toFixed(2); // Random amount between 10 and 500
     res.json({
         order_id: orderId,
-        order_count: orderCount
+        customerId:customerId,
+        amount:amount
     });
 });
 

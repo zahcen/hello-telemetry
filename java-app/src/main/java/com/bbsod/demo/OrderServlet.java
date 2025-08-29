@@ -38,6 +38,8 @@ import io.opentelemetry.context.Scope;
 
 public class OrderServlet extends HttpServlet {
 
+    private final OrderMetrics metrics = new OrderMetrics();
+
     private static final Tracer tracer =
         GlobalOpenTelemetry.getTracer("Order");
 
@@ -76,11 +78,15 @@ public class OrderServlet extends HttpServlet {
         // Parse JSON manually (simple approach)
         String json = content.toString();
         String orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
-        String orderCount = json.replaceAll(".*\"order_count\":(\\d+).*", "$1");
-        System.out.println("orderCount="+orderCount);
+        String customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
+        String amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
+        
+        metrics.incrementOrderCount(customerId, Double.parseDouble(amount));
+
         span.setAttribute("order.id", orderId);
         span.end();
+        
         // Redirect back to JSP with parameters
-        response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&order_count=" + orderCount);
+        response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
     }
 }
