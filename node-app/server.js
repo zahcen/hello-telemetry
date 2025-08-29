@@ -23,7 +23,7 @@ app.post("/order", (req, res) => {
     const amount=Math.floor(Math.random() * (99999 - 10000 + 1)) + 500; // Random amount between 10 and 500
     res.json({
         order_id: orderId,
-        customerId:customerId,
+        customer_id:customerId,
         amount:amount
     });
 });
