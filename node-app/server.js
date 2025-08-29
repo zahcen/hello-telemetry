@@ -20,7 +20,7 @@ app.post("/order", (req, res) => {
     orderCount++;
     const orderId = generateOrderId();
     const customerId= generateOrderId();
-    const amount=Math.floor(Math.random() * (99999 - 10000 + 1)) + 500; // Random amount between 10 and 500
+    const amount=Math.floor(Math.random() * 1000) + 500;
     res.json({
         order_id: orderId,
         customer_id:customerId,
