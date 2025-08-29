@@ -79,7 +79,7 @@ public class OrderServlet extends HttpServlet {
         String json = content.toString();
         String orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
         String customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
-        String amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
+        String amount = json.replaceAll(".*\"amount\":\"([.\\d]+)\".*", "$1");
         
         metrics.incrementOrderCount(customerId, Double.parseDouble(amount));
 

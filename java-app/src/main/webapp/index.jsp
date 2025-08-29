@@ -76,7 +76,7 @@
         String customerId = request.getParameter("customer_id");
         String amount = request.getParameter("amount");
 
-        if (orderId != null && orderCount != null) {
+        if (orderId != null) {
     %>
         <h2>Order Created Successfully!</h2>
         <p><strong>Order ID:</strong> <%= orderId %></p>
