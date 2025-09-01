@@ -1,3 +1,5 @@
+<%@ page import="java.util.Map" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -104,6 +106,26 @@
             <td class="header-value"><%= headerValue %></td>
         </tr>
         <% } %>
+    </table>
+
+    <h2>Environment Variables in Tomcat</h2>
+    <table border="1">
+        <tr>
+            <th class="header-name">Variable</th>
+            <th class="header-value">Value</th>
+        </tr>
+        <%
+            // Get all environment variables
+            Map<String, String> env = System.getenv();
+            for (Map.Entry<String, String> entry : env.entrySet()) {
+        %>
+        <tr>
+            <td class="header-name"><%= entry.getKey() %></td>
+            <td class="header-value"><%= entry.getValue() %></td>
+        </tr>
+        <%
+            }
+        %>
     </table>
 
 </body>
