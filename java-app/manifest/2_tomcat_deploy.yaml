@@ -17,7 +17,6 @@ spec:
         app: ht-tomcat
         ver: "1.0"
         version: "2.0"
-        deployment.environment: NEW_INT
       annotations:
        instrumentation.opentelemetry.io/inject-java: "observability/otel-instrumentation"
 
@@ -34,11 +33,6 @@ spec:
             - name: NODEJS_ORDER_URL
               value: "http://node-app-service:3000/order"
 
-            
-            - name: TEST_OTEL_RESOURCE_ATTRIBUTES
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
                   
             # - name: JAVA_OPTS
             #   value: >-
