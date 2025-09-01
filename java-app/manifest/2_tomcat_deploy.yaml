@@ -33,6 +33,7 @@ spec:
           env:
             - name: NODEJS_ORDER_URL
               value: "http://node-app-service:3000/order"
+
             
             - name: TEST_OTEL_RESOURCE_ATTRIBUTES
               valueFrom:
