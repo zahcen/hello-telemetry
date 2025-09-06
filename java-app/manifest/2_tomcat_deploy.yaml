@@ -31,7 +31,7 @@ spec:
             - containerPort: 1099
           env:
             - name: NODEJS_ORDER_URL
-              value: "http://node-app-service:3000/order"
+              value: "http://node-app-service:3000/payment"
   
             # - name: JAVA_OPTS
             #   value: >-

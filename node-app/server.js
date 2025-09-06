@@ -14,7 +14,7 @@ function generateOrderId() {
 }
 
 // POST /order → increments counter and generates a random order ID
-app.post("/order", (req, res) => {
+app.post("/payment", (req, res) => {
     const orderId = generateOrderId();
     const customerId= generateOrderId();
     const amount=Math.floor(Math.random() * 1000) + 500;

@@ -1,40 +1,20 @@
 package com.bbsod.demo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.context.Scope;
 
 public class OrderServlet extends HttpServlet {
 
@@ -46,14 +26,20 @@ public class OrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        Span span = tracer.spanBuilder("create_order").startSpan();
-        span.setAttribute("component", "PaymentService");
-        span.setAttribute("status", "OK");
+        Span span = tracer.spanBuilder("PlaceOrder").startSpan();
+        String orderId = "",customerId = "",amount = "";
+
+        try {
+            // Add useful attributes to the span
+            double orderAmount = 10 + Math.random() * 500;
+            span.setAttribute("order_amount", orderAmount);
+            if (orderAmount<100)
+                span.setAttribute("payment_method", "invoice");
 
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
         String nodeJsUrl = System.getenv("NODEJS_ORDER_URL");
         if (nodeJsUrl == null || nodeJsUrl.isEmpty()) {
-            nodeJsUrl = "http://localhost:3000/order";
+            nodeJsUrl = "http://localhost:3000/payment";
         }
         System.out.println("nodeJsUrl="+nodeJsUrl);
         // Call internal Node.js service
@@ -79,22 +65,73 @@ public class OrderServlet extends HttpServlet {
         String json = content.toString();
         System.out.println("json="+json);
 
-        String orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
+        orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
         System.out.println("orderId="+orderId);
 
-        String customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
+        customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
         System.out.println("customerId="+customerId); 
 
-        String amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
+        amount = Double.toString(orderAmount);
+        //amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
         System.out.println("amount="+amount);
 
         // Record metrics
-        metrics.incrementOrderCount(customerId, Double.parseDouble(amount));
+        metrics.incrementOrderCount(customerId, orderAmount);
 
         span.setAttribute("order.id", orderId);
-        span.end();
-        
-        // Redirect back to JSP with parameters
-        response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
+
+        // Simulate a payment error for orders above 400 EUR
+        if (orderAmount > 350) {
+            throw new RuntimeException("Payment failed: Card declined");
+        }
+
+        // Simulate successful order placement
+        System.out.println("Order placed successfully: " + orderAmount);
+
+        } catch (Exception e) {
+            // Attach exception details to the span
+            span.recordException(e);
+            span.setStatus(StatusCode.ERROR, "Payment failed");
+
+            System.err.println("Order failed: " + e.getMessage());
+
+        } finally {
+            // Always end the span
+            span.end();
+            // Redirect back to JSP with parameters
+            response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
+        }
     }
+
+
+    public  void placeOrder(double orderAmount) {
+        // Start a span for the order process
+        Span span = tracer.spanBuilder("PlaceOrder").startSpan();
+
+        try {
+            // Add useful attributes to the span
+            span.setAttribute("order_amount", orderAmount);
+            span.setAttribute("payment_method", "credit_card");
+
+            // Simulate a payment error for orders above 400 EUR
+            if (orderAmount > 300) {
+                throw new RuntimeException("Payment failed: Card declined");
+            }
+
+            // Simulate successful order placement
+            System.out.println("Order placed successfully: " + orderAmount);
+
+        } catch (Exception e) {
+            // Attach exception details to the span
+            span.recordException(e);
+            span.setStatus(StatusCode.ERROR, "Payment failed");
+
+            System.err.println("Order failed: " + e.getMessage());
+
+        } finally {
+            // Always end the span
+            span.end();
+        }
+    }
+
 }

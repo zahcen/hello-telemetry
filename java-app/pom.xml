@@ -51,10 +51,11 @@
 
         <!-- OpenTelemetry -->
         <!-- https://mvnrepository.com/artifact/io.opentelemetry.instrumentation/opentelemetry-instrumentation-api -->
+
         <dependency>
-            <groupId>io.opentelemetry.instrumentation</groupId>
-            <artifactId>opentelemetry-instrumentation-api</artifactId>
-            <version>2.19.0</version>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>1.53.0</version>
         </dependency>
 
 
