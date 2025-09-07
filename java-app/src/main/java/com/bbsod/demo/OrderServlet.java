@@ -3,8 +3,11 @@ package com.bbsod.demo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import org.json.JSONObject;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -35,6 +38,8 @@ public class OrderServlet extends HttpServlet {
             span.setAttribute("order_amount", orderAmount);
             if (orderAmount<100)
                 span.setAttribute("payment_method", "invoice");
+            else
+                span.setAttribute("payment_method", "credit_card");
 
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
         String nodeJsUrl = System.getenv("NODEJS_ORDER_URL");
@@ -99,8 +104,22 @@ public class OrderServlet extends HttpServlet {
             // Always end the span
             span.end();
             // Redirect back to JSP with parameters
-            response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
-        }
+            //response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
+            
+            // Set response type to JSON
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            // Build JSON response
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("order_id", orderId);
+            jsonResponse.put("customer_id", customerId);
+            jsonResponse.put("amount", amount);
+
+            // Send JSON to client
+            PrintWriter out = response.getWriter();
+            out.print(jsonResponse.toString());
+            out.flush();
     }
 
 

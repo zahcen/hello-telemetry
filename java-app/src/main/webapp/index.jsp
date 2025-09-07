@@ -1,16 +1,14 @@
 <%@ page import="java.util.Map" %>
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>My Web App</title>
-
-</script>
     <style>
         table {
             border-collapse: collapse;
-            width: 80%; /* Table width */
+            width: 80%;
             margin-top: 20px;
             font-family: Arial, sans-serif;
         }
@@ -22,15 +20,13 @@
         th {
             background-color: #f2f2f2;
         }
-        /* Set custom column widths */
         th.header-name, td.header-name {
-            width: 150px; /* Adjust as needed */
+            width: 150px;
         }
         th.header-value, td.header-value {
-            width: 200px; /* Adjust as needed */
-            word-wrap: break-word; /* Handle long header values */
+            width: 200px;
+            word-wrap: break-word;
         }
-
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -46,48 +42,29 @@
         a:hover {
             text-decoration: underline;
         }
-
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+        #orderResult {
+            margin-top: 20px;
+            font-size: 16px;
+            color: green;
         }
-        h1 {
-            color: #333;
-        }
-        a {
-            text-decoration: none;
-            color: #007bff;
-        }
-        a:hover {
-            text-decoration: underline;
+        #errorResult {
+            margin-top: 20px;
+            font-size: 16px;
+            color: red;
         }
     </style>
 </head>
 <body>
     <h1>Welcome to Open-Telemetry Test Application</h1>
     <a href="results">View Database Results</a>
-    <br/>
-    <br/>
-    <form id="orderForm" method="post" action="order"></form>    
-    <button onclick="document.getElementById('orderForm').submit()">Create Order</button>
+    <br/><br/>
 
-    <%
-        // serverUrl: 'https://apmserver.zitaconseil.fr'
-        String orderId = request.getParameter("order_id");
-        String customerId = request.getParameter("customer_id");
-        String amount = request.getParameter("amount");
+    <!-- Create Order Button -->
+    <button id="createOrderBtn">Create Order</button>
 
-        if (orderId != null) {
-    %>
-        <h2>Order Created Successfully!</h2>
-        <p><strong>Order ID:</strong> <%= orderId %></p>
-        <p><strong>Customer Id:</strong> <%= customerId %></p>
-        <p><strong>Amount:</strong> <%= amount %></p>
-
-    <%
-        }
-    %>
+    <!-- Result Container -->
+    <div id="orderResult"></div>
+    <div id="errorResult"></div>
 
     <h2>HTTP Request Headers</h2>
     <table>
@@ -115,7 +92,6 @@
             <th class="header-value">Value</th>
         </tr>
         <%
-            // Get all environment variables
             Map<String, String> env = System.getenv();
             for (Map.Entry<String, String> entry : env.entrySet()) {
         %>
@@ -123,10 +99,40 @@
             <td class="header-name"><%= entry.getKey() %></td>
             <td class="header-value"><%= entry.getValue() %></td>
         </tr>
-        <%
-            }
-        %>
+        <% } %>
     </table>
 
+    <script>
+        document.getElementById("createOrderBtn").addEventListener("click", function () {
+            // Clear previous results
+            document.getElementById("orderResult").innerHTML = "";
+            document.getElementById("errorResult").innerHTML = "";
+
+            // Send AJAX POST request to /order API
+            fetch("order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            .then(response => response.json()) // Expecting JSON response from backend
+            .then(data => {
+                if (data && data.order_id) {
+                    document.getElementById("orderResult").innerHTML = `
+                        <h2>Order Created Successfully!</h2>
+                        <p><strong>Order ID:</strong> ${data.order_id}</p>
+                        <p><strong>Customer ID:</strong> ${data.customer_id}</p>
+                        <p><strong>Amount:</strong> ${data.amount}</p>
+                    `;
+                } else {
+                    document.getElementById("errorResult").innerHTML = "Failed to create order!";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("errorResult").innerHTML = "An error occurred while creating the order!";
+            });
+        });
+    </script>
 </body>
 </html>
