@@ -84,9 +84,11 @@
     <a href="results">View Database Results</a>
     <br/><br/>
 
+
     <!-- Create Order Button -->
     <button id="createOrderBtn">Create Order</button>
-
+    <label><input type="checkbox" id="addMetricsCheckbox">With Metrics</label>
+    
     <h2>Order History</h2>
     <table id="ordersTable">
         <thead>
@@ -154,12 +156,19 @@
         document.getElementById("createOrderBtn").addEventListener("click", function () {
             // Clear previous errors only, keep old orders
             document.getElementById("errorResult").innerHTML = "";
+            // Read checkbox value
+            const addMetrics = document.getElementById("addMetricsCheckbox").checked;
 
+            // Prepare form data
+            const formData = new URLSearchParams();
+            formData.append("add_metrics", addMetrics); // true or false
+            
             fetch("order", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
-                }
+                },
+                body: formData.toString()
             })
             .then(response => response.json())
             .then(data => {
@@ -196,7 +205,7 @@
                         <td>\${data.order_id}</td>
                         <td>\${data.customer_id}</td>
                         <td>\${data.amount} €</td>
-                        <td>\${data.payment_method} €</td>
+                        <td>\${data.payment_method}</td>
                         <td>\${paymentLabel}</td>
                     `;
 

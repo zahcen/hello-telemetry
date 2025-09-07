@@ -29,20 +29,29 @@ public class OrderServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        Span span = tracer.spanBuilder("PlaceOrder").startSpan();
+        
+        String addMetricsParam  = request.getParameter("add_metrics"); // "true" or "false"
+        boolean addMetrics = Boolean.parseBoolean(addMetricsParam);
+        System.out.println("addMetrics="+addMetrics);
+        Span span = null;
+        if (addMetrics)
+            span = tracer.spanBuilder("PlaceOrder").startSpan();
         String orderId = "",customerId = "",amount = "", payment_method="";
         boolean payment_status=true;
 
         try {
             // Add useful attributes to the span
             double orderAmount = 10 + Math.random() * 500;
-            span.setAttribute("order_amount", orderAmount);
+            if (addMetrics)
+                span.setAttribute("order_amount", orderAmount);
             if (orderAmount<100){
-                span.setAttribute("payment_method", "Invoice");
+                if (addMetrics)
+                    span.setAttribute("payment_method", "Invoice");
                 payment_method="Invoice";
             }
             else{
-                span.setAttribute("payment_method", "credit_card");
+                if (addMetrics)
+                    span.setAttribute("payment_method", "Credit card");
                 payment_method="Credit card";
             }
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
@@ -88,7 +97,8 @@ public class OrderServlet extends HttpServlet {
         // Record metrics
         metrics.incrementOrderCount(customerId, orderAmount);
 
-        span.setAttribute("order.id", orderId);
+        if (addMetrics)
+            span.setAttribute("order.id", orderId);
 
         // Simulate a payment error for orders above 400 EUR
         if (orderAmount > 400) {
@@ -101,15 +111,17 @@ public class OrderServlet extends HttpServlet {
 
         } catch (Exception e) {
             // Attach exception details to the span
-            span.recordException(e);
-            span.setStatus(StatusCode.ERROR, "Payment failed");
-
+            if (addMetrics){
+                span.recordException(e);
+                span.setStatus(StatusCode.ERROR, "Payment failed");
+            }
 
             System.err.println("Order failed: " + e.getMessage());
 
         } finally {
             // Always end the span
-            span.end();
+            if (addMetrics)
+                span.end();
             // Redirect back to JSP with parameters
             //response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
             
@@ -134,7 +146,7 @@ public class OrderServlet extends HttpServlet {
     }
 
 
-    public  void placeOrder(double orderAmount) {
+    private  void placeOrder(double orderAmount) {
         // Start a span for the order process
         Span span = tracer.spanBuilder("PlaceOrder").startSpan();
 
