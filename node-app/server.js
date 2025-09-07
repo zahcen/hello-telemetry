@@ -12,7 +12,7 @@ app.use(express.json()); // Replaces body-parser.json()
 // POST /order → increments counter and generates a random order ID
 app.post("/payment", (req, res) => {
     
-    
+
     console.log("=== Incoming /payment request ===");
     console.log("Headers:", req.headers);
     console.log("Body received:", req.body);
@@ -40,6 +40,19 @@ app.post("/payment", (req, res) => {
         customer_id: customerId,
         payment_status: paymentStatus
     });
+
+    // Simulate 300ms of work
+    setTimeout(() => {
+        // Determine payment status
+        let paymentStatus = amount > 400 ? "0" : "1";
+        // Send response back
+        res.json({
+            order_id: orderId,
+            customer_id: customerId,
+            payment_status: paymentStatus
+        });
+    }, 300);
+
 });
 
 // Start the server
