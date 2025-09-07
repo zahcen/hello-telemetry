@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 import org.json.JSONObject;
 
@@ -114,16 +115,32 @@ public class OrderServlet extends HttpServlet {
         Span span = null;
         if (addMetrics)
             span = tracer.spanBuilder("PlaceOrder").startSpan();
-        String orderId = "",customerId = "",amount = "", payment_method="";
+        
+        String payment_method="";
         boolean payment_status=true;
+        
+        Random random = new Random();
+
+        // Generate random orderId between 1000 and 2000 (inclusive)
+        int orderId_int = 1000 + random.nextInt(2000 - 1000 + 1);
+        String orderId = Integer.toString(orderId_int);
+
+        // Generate random customerId between 10000 and 20000 (inclusive)
+        int customerId_int = 10000 + random.nextInt(20000 - 10000 + 1);
+        String customerId = Integer.toString(customerId_int);
+
+        System.out.println("Generated Order ID: " + orderId);
+        System.out.println("Generated Customer ID: " + customerId);
 
         getDBdata();
 
         validate_shipping_address(addMetrics);
 
+        // Add useful attributes to the span
+        double orderAmount = 10 + Math.random() * 500;
+        String amount = String.format("%.2f", orderAmount);
+
         try {
-            // Add useful attributes to the span
-            double orderAmount = 10 + Math.random() * 500;
             if (addMetrics)
                 span.setAttribute("order_amount", orderAmount);
             if (orderAmount<100){
@@ -146,7 +163,7 @@ public class OrderServlet extends HttpServlet {
         JSONObject jsonBody = new JSONObject();
         jsonBody.put("orderId", orderId);
         jsonBody.put("customerId", customerId);
-        jsonBody.put("amount", amount);
+        jsonBody.put("amount",  Double.toString(orderAmount));
         System.out.println("jsonBody="+jsonBody);
         //jsonBody.put("payment_method", payment_method);
 
@@ -193,7 +210,6 @@ public class OrderServlet extends HttpServlet {
         System.out.println("payment_status="+payment_status);
 
         //amount = Double.toString(orderAmount);
-        amount = String.format("%.2f", orderAmount);
         //amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
         System.out.println("amount="+amount);
 
