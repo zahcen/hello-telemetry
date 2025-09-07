@@ -77,7 +77,8 @@ public class OrderServlet extends HttpServlet {
         customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
         System.out.println("customerId="+customerId); 
 
-        amount = Double.toString(orderAmount);
+        //amount = Double.toString(orderAmount);
+        amount = String.format("%.2f", orderAmount);
         //amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
         System.out.println("amount="+amount);
 

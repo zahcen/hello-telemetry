@@ -62,6 +62,22 @@
     <!-- Create Order Button -->
     <button id="createOrderBtn">Create Order</button>
 
+    <h2>Order History</h2>
+    <table id="ordersTable">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer ID</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+            </tr>
+        </thead>
+        <tbody id="ordersBody">
+            <!-- Orders will be appended here -->
+        </tbody>
+    </table>
+
+
     <!-- Result Container -->
     <div id="orderResult"></div>
     <div id="errorResult"></div>
@@ -107,6 +123,55 @@
     <% } %>
     <script>
         document.getElementById("createOrderBtn").addEventListener("click", function () {
+            // Clear previous errors only, keep old orders
+            document.getElementById("errorResult").innerHTML = "";
+
+            fetch("order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("API Response:", data);
+
+                if (data && data.order_id) {
+                    // Determine payment status label
+                    let paymentLabel;
+                    if (data.payment_status) {
+                        paymentLabel = '<span style="color:green;font-weight:bold;">Successful ✅</span>';
+                    } else if (! data.payment_status) {
+                        paymentLabel = '<span style="color:red;font-weight:bold;">Payment Error ❌</span>';
+                    } else {
+                        paymentLabel = '<span style="color:orange;font-weight:bold;">Unknown</span>';
+                    }
+
+                    // Append new row to the table
+                    const ordersBody = document.getElementById("ordersBody");
+                    const newRow = document.createElement("tr");
+
+                    newRow.innerHTML = `
+                        <td>${data.order_id}</td>
+                        <td>${data.customer_id}</td>
+                        <td>${data.amount}</td>
+                        <td>${paymentLabel}</td>
+                    `;
+
+                    ordersBody.appendChild(newRow);
+                } else {
+                    document.getElementById("errorResult").innerHTML = "Failed to create order!";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("errorResult").innerHTML = "An error occurred while creating the order!";
+            });
+        });
+
+
+
+        document.getElementById("createOrderBtn_1").addEventListener("click", function () {
             // Clear previous results
             document.getElementById("orderResult").innerHTML = "";
             document.getElementById("errorResult").innerHTML = "";
