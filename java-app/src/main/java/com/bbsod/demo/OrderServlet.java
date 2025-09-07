@@ -6,6 +6,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.json.JSONObject;
 
@@ -26,6 +31,62 @@ public class OrderServlet extends HttpServlet {
     private static final Tracer tracer =
         GlobalOpenTelemetry.getTracer("Order");
 
+    protected void getDBdata(){
+        // JDBC connection parameters
+        String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
+        jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase";
+        String jdbcUser = "myuser";
+        String jdbcPassword = "mypassword";
+        try {
+            System.out.println("Load MySQL JDBC Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            System.out.println("Establish connection using:"+jdbcUrl);
+            Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
+                    jdbcPassword);
+
+            // Create a statement
+            Statement statement = connection.createStatement();
+
+            // Execute a query
+            String query = "SELECT * FROM mytable";
+            ResultSet resultSet = statement.executeQuery(query);
+
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int age = resultSet.getInt("age");
+            }
+        } catch (ClassNotFoundException e) {
+            System.out.println("MySQL JDBC Driver not found.");
+            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Connection failed.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void validate_shipping_address(boolean addMetrics){
+        Span span = null;
+        if (addMetrics)
+            span = tracer.spanBuilder("Validate Shipping Address").startSpan();
+
+        // Sleep for 2 seconds
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        if (addMetrics)
+            span.end();        
+    }
+
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
@@ -38,6 +99,10 @@ public class OrderServlet extends HttpServlet {
             span = tracer.spanBuilder("PlaceOrder").startSpan();
         String orderId = "",customerId = "",amount = "", payment_method="";
         boolean payment_status=true;
+
+        getDBdata();
+
+        validate_shipping_address(addMetrics);
 
         try {
             // Add useful attributes to the span
