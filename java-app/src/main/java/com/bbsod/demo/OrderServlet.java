@@ -3,6 +3,7 @@ package com.bbsod.demo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -77,7 +78,7 @@ public class OrderServlet extends HttpServlet {
 
         // Sleep for 2 seconds
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -86,6 +87,22 @@ public class OrderServlet extends HttpServlet {
             span.end();        
     }
 
+
+    private void validate_billing_address(boolean addMetrics){
+        Span span = null;
+        if (addMetrics)
+            span = tracer.spanBuilder("Validate Billing Address").startSpan();
+
+        // Sleep for 2 seconds
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        if (addMetrics)
+            span.end();        
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -124,6 +141,14 @@ public class OrderServlet extends HttpServlet {
         if (nodeJsUrl == null || nodeJsUrl.isEmpty()) {
             nodeJsUrl = "http://localhost:3000/payment";
         }
+        
+        // Prepare JSON body
+        JSONObject jsonBody = new JSONObject();
+        jsonBody.put("orderId", orderId);
+        jsonBody.put("customerId", customerId);
+        jsonBody.put("amount", amount);
+        //jsonBody.put("payment_method", payment_method);
+
         System.out.println("nodeJsUrl="+nodeJsUrl);
         // Call internal Node.js service
         URL url = new URL(nodeJsUrl);
@@ -131,6 +156,11 @@ public class OrderServlet extends HttpServlet {
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setDoOutput(true);
+        // Send JSON data
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(jsonBody.toString().getBytes("UTF-8"));
+            os.flush();
+        }
 
         // Read Node.js response
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -144,6 +174,8 @@ public class OrderServlet extends HttpServlet {
         in.close();
         conn.disconnect();
 
+        validate_billing_address(addMetrics);
+
         // Parse JSON manually (simple approach)
         String json = content.toString();
         System.out.println("json="+json);
@@ -153,6 +185,11 @@ public class OrderServlet extends HttpServlet {
 
         customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
         System.out.println("customerId="+customerId); 
+
+        String payment_status_int = json.replaceAll(".*\"payment_status\":(\\d+).*", "$1");
+        System.out.println("payment_status_int="+payment_status_int);
+        payment_status = "1".equals(payment_status_int);
+        System.out.println("payment_status="+payment_status);
 
         //amount = Double.toString(orderAmount);
         amount = String.format("%.2f", orderAmount);
@@ -165,11 +202,14 @@ public class OrderServlet extends HttpServlet {
         if (addMetrics)
             span.setAttribute("order.id", orderId);
 
-        // Simulate a payment error for orders above 400 EUR
-        if (orderAmount > 400) {
-            payment_status=false;
+        if (! payment_status) {
             throw new RuntimeException("Payment failed: Card declined");
         }
+
+        //if (orderAmount > 400) {
+        //    payment_status=false;
+        //    throw new RuntimeException("Payment failed: Card declined");
+        //}
 
         // Simulate successful order placement
         System.out.println("Order placed successfully: " + orderAmount);
