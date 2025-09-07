@@ -96,6 +96,7 @@
                 <th>Order ID</th>
                 <th>Customer ID</th>
                 <th>Amount</th>
+                <th>Payment Method</th>
                 <th>Payment Status</th>
             </tr>
         </thead>
@@ -195,6 +196,7 @@
                         <td>\${data.order_id}</td>
                         <td>\${data.customer_id}</td>
                         <td>\${data.amount} €</td>
+                        <td>\${data.payment_method} €</td>
                         <td>\${paymentLabel}</td>
                     `;
 

@@ -30,18 +30,21 @@ public class OrderServlet extends HttpServlet {
             throws ServletException, IOException {
 
         Span span = tracer.spanBuilder("PlaceOrder").startSpan();
-        String orderId = "",customerId = "",amount = "";
+        String orderId = "",customerId = "",amount = "", payment_method="";
         boolean payment_status=true;
 
         try {
             // Add useful attributes to the span
             double orderAmount = 10 + Math.random() * 500;
             span.setAttribute("order_amount", orderAmount);
-            if (orderAmount<100)
-                span.setAttribute("payment_method", "invoice");
-            else
+            if (orderAmount<100){
+                span.setAttribute("payment_method", "Invoice");
+                payment_method="Invoice";
+            }
+            else{
                 span.setAttribute("payment_method", "credit_card");
-
+                payment_method="Credit card";
+            }
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
         String nodeJsUrl = System.getenv("NODEJS_ORDER_URL");
         if (nodeJsUrl == null || nodeJsUrl.isEmpty()) {
@@ -119,7 +122,9 @@ public class OrderServlet extends HttpServlet {
             jsonResponse.put("order_id", orderId);
             jsonResponse.put("customer_id", customerId);
             jsonResponse.put("amount", amount);
+            jsonResponse.put("payment_method", payment_method);
             jsonResponse.put("payment_status", payment_status);
+
 
             // Send JSON to client
             PrintWriter out = response.getWriter();
