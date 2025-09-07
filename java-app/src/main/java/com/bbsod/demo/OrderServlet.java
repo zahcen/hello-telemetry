@@ -88,7 +88,7 @@ public class OrderServlet extends HttpServlet {
         span.setAttribute("order.id", orderId);
 
         // Simulate a payment error for orders above 400 EUR
-        if (orderAmount > 350) {
+        if (orderAmount > 400) {
             payment_status=false;
             throw new RuntimeException("Payment failed: Card declined");
         }

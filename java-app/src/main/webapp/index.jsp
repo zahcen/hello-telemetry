@@ -52,6 +52,31 @@
             font-size: 16px;
             color: red;
         }
+  
+        #ordersTable {
+            margin: 20px auto;       /* Center table */
+            width: 70%;              /* Adjust width */
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #ordersTable th, #ordersTable td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #ordersTable th {
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+        }
+
+        #ordersTable td {
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -66,6 +91,7 @@
     <table id="ordersTable">
         <thead>
             <tr>
+                <th>#</th>
                 <th>Order ID</th>
                 <th>Customer ID</th>
                 <th>Amount</th>
@@ -76,7 +102,6 @@
             <!-- Orders will be appended here -->
         </tbody>
     </table>
-
 
     <!-- Result Container -->
     <div id="orderResult"></div>
@@ -122,6 +147,8 @@
     </table>
     <% } %>
     <script>
+        let orderCount = 0; // global counter
+
         document.getElementById("createOrderBtn").addEventListener("click", function () {
             // Clear previous errors only, keep old orders
             document.getElementById("errorResult").innerHTML = "";
@@ -137,6 +164,7 @@
                 console.log("API Response:", data);
 
                 if (data && data.order_id) {
+                    orderCount++; // increment counter
                     // Determine payment status label
                     let paymentLabel;
                     if (data.payment_status) {
@@ -152,10 +180,11 @@
                     const newRow = document.createElement("tr");
 
                     newRow.innerHTML = `
-                        <td>${data.order_id}</td>
-                        <td>${data.customer_id}</td>
-                        <td>${data.amount}</td>
-                        <td>${paymentLabel}</td>
+                        <td>\${orderCount}</td>
+                        <td>\${data.order_id}</td>
+                        <td>\${data.customer_id}</td>
+                        <td>\${data.amount} €</td>
+                        <td>\${paymentLabel}</td>
                     `;
 
                     ordersBody.appendChild(newRow);
