@@ -120,6 +120,7 @@ public class OrderServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             out.print(jsonResponse.toString());
             out.flush();
+        }
     }
 
 
