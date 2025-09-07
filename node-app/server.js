@@ -10,11 +10,22 @@ app.use(express.json()); // Replaces body-parser.json()
 
 // POST /order → increments counter and generates a random order ID
 app.post("/payment", (req, res) => {
- const { orderId, customerId, amount } = req.body;
+
+    console.log("=== Incoming /payment request ===");
+    console.log("Headers:", req.headers);
+    console.log("Body received:", req.body);
+    
+    const { orderId, customerId, amount } = req.body;
+    
+    console.log("Parsed fields => orderId:", orderId, "customerId:", customerId, "amount:", amount);
 
     // Validate required fields
-    if (!orderId || !customerId || amount === undefined) {
-        return res.status(400).json({ error: "Missing required fields" });
+    if (orderId === undefined || customerId === undefined || amount === undefined) {
+        console.error("Missing required fields in request body");
+        return res.status(400).json({ 
+            error: "Missing required fields", 
+            received: req.body 
+        });
     }
 
     // Determine payment status

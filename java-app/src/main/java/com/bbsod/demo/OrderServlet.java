@@ -147,6 +147,7 @@ public class OrderServlet extends HttpServlet {
         jsonBody.put("orderId", orderId);
         jsonBody.put("customerId", customerId);
         jsonBody.put("amount", amount);
+        System.out.println("jsonBody="+jsonBody);
         //jsonBody.put("payment_method", payment_method);
 
         System.out.println("nodeJsUrl="+nodeJsUrl);
