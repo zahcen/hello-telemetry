@@ -120,10 +120,24 @@
                 if (data && data.order_id) {
                     document.getElementById("orderResult").innerHTML = `
                         <h2>Order Created Successfully!</h2>
-                        <p><strong>Order ID:</strong> ${data.order_id}</p>
-                        <p><strong>Customer ID:</strong> ${data.customer_id}</p>
-                        <p><strong>Amount:</strong> ${data.amount}</p>
+                        <p><strong>Order ID:</strong> \${data.order_id}</p>
+                        <p><strong>Customer ID:</strong> \${data.customer_id}</p>
+                        <p><strong>Amount:</strong> \${data.amount}</p>
                     `;
+                    // Check payment status
+                    if (data.payment_status && data.payment_status.toLowerCase() === "ko") {
+                        document.getElementById("errorResult").innerHTML = `
+                            <h3 style="color: red;">Payment Error</h3>
+                        `;
+                    } else if (data.payment_status && data.payment_status.toLowerCase() === "ok") {
+                        document.getElementById("orderResult").innerHTML += `
+                            <p><strong>Payment:</strong> Successful ✅</p>
+                        `;
+                    } else {
+                        document.getElementById("errorResult").innerHTML = `
+                            <h3 style="color: orange;">Payment status unknown</h3>
+                        `;
+                    }                    
                 } else {
                     document.getElementById("errorResult").innerHTML = "Failed to create order!";
                 }

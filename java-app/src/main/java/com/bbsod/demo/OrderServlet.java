@@ -31,6 +31,7 @@ public class OrderServlet extends HttpServlet {
 
         Span span = tracer.spanBuilder("PlaceOrder").startSpan();
         String orderId = "",customerId = "",amount = "";
+        boolean payment_status=true;
 
         try {
             // Add useful attributes to the span
@@ -87,6 +88,7 @@ public class OrderServlet extends HttpServlet {
 
         // Simulate a payment error for orders above 400 EUR
         if (orderAmount > 350) {
+            payment_status=false;
             throw new RuntimeException("Payment failed: Card declined");
         }
 
@@ -97,6 +99,7 @@ public class OrderServlet extends HttpServlet {
             // Attach exception details to the span
             span.recordException(e);
             span.setStatus(StatusCode.ERROR, "Payment failed");
+
 
             System.err.println("Order failed: " + e.getMessage());
 
@@ -115,6 +118,7 @@ public class OrderServlet extends HttpServlet {
             jsonResponse.put("order_id", orderId);
             jsonResponse.put("customer_id", customerId);
             jsonResponse.put("amount", amount);
+            jsonResponse.put("payment_status", payment_status);
 
             // Send JSON to client
             PrintWriter out = response.getWriter();
