@@ -4,17 +4,30 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
 
+
 // Middleware
 app.use(cors());
 app.use(express.json()); // Replaces body-parser.json()
 
 // POST /order → increments counter and generates a random order ID
 app.post("/payment", (req, res) => {
+    
+    // Wait 300 ms before continuing
+    setTimeout(() => {
+        res.json({
+            order_id: req.body.orderId,
+            customer_id: req.body.customerId,
+            payment_status: 1,
+            amount: req.body.amount,
+            payment_method: "Credit Card"
+        });
+    }, 300);
 
     console.log("=== Incoming /payment request ===");
     console.log("Headers:", req.headers);
     console.log("Body received:", req.body);
-    
+
+
     const { orderId, customerId, amount } = req.body;
     
     console.log("Parsed fields => orderId:", orderId, "customerId:", customerId, "amount:", amount);

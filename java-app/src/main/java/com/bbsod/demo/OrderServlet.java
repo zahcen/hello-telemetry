@@ -180,6 +180,11 @@ public class OrderServlet extends HttpServlet {
                     span.setAttribute("payment_method", "Credit card");
                 payment_method="Credit card";
             }
+
+        getDBdata();
+        validate_billing_address(addMetrics);
+
+
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
         String nodeJsUrl = System.getenv("NODEJS_ORDER_URL");
         if (nodeJsUrl == null || nodeJsUrl.isEmpty()) {
@@ -217,8 +222,6 @@ public class OrderServlet extends HttpServlet {
         in.close();
         conn.disconnect();
         System.out.println("content="+content);
-
-        validate_billing_address(addMetrics);
 
         // Parse JSON manually (simple approach)
         String json = content.toString();
