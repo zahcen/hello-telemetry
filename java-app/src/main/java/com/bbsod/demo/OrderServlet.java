@@ -184,13 +184,12 @@ public class OrderServlet extends HttpServlet {
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String inputLine;
         StringBuffer content = new StringBuffer();
-        System.out.println("content="+content);
-
         while ((inputLine = in.readLine()) != null) {
             content.append(inputLine);
         }
         in.close();
         conn.disconnect();
+        System.out.println("content="+content);
 
         validate_billing_address(addMetrics);
 
@@ -198,23 +197,21 @@ public class OrderServlet extends HttpServlet {
         String json = content.toString();
         System.out.println("json="+json);
 
-        orderId = json.replaceAll(".*\"order_id\":(\\d+).*", "$1");
-        System.out.println("orderId="+orderId);
+        // Parse the JSON
+        JSONObject jsonObject = new JSONObject(json);
 
-        customerId = json.replaceAll(".*\"customer_id\":(\\d+).*", "$1");
-        System.out.println("customerId="+customerId); 
+        // Extract values
+        orderId = jsonObject.getString("order_id");
+        customerId = jsonObject.getString("customer_id");
+        payment_status = jsonObject.getString("payment_status");
 
-        String payment_status_int = json.replaceAll(".*\"payment_status\":(\\d+).*", "$1");
-        System.out.println("payment_status_int="+payment_status_int);
-        payment_status = "1".equals(payment_status_int);
-        System.out.println("payment_status="+payment_status);
-
-        //amount = Double.toString(orderAmount);
-        //amount = json.replaceAll(".*\"amount\":(\\d+).*", "$1");
-        System.out.println("amount="+amount);
+        // Print the results
+        System.out.println("Order ID: " + orderId);
+        System.out.println("Customer ID: " + customerId);
+        System.out.println("Payment Status: " + payment_status);
 
         // Record metrics
-        metrics.incrementOrderCount(customerId, orderAmount);
+        //metrics.incrementOrderCount(customerId, orderAmount);
 
         if (addMetrics)
             span.setAttribute("order.id", orderId);
