@@ -77,6 +77,24 @@
             font-size: 14px;
         }
 
+        /* Spinner style */
+        #loadingSpinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
@@ -87,6 +105,7 @@
 
     <!-- Create Order Button -->
     <button id="createOrderBtn">Create Order</button>
+    <div id="loadingSpinner"></div>
     <label><input type="checkbox" id="addMetricsCheckbox">With Metrics</label>
     
     <h2>Order History</h2>
@@ -154,6 +173,9 @@
         let orderCount = 0; // global counter
 
         document.getElementById("createOrderBtn").addEventListener("click", function () {
+            const spinner = document.getElementById("loadingSpinner");
+            spinner.style.display = "inline-block";
+
             // Clear previous errors only, keep old orders
             document.getElementById("errorResult").innerHTML = "";
             // Read checkbox value
@@ -217,6 +239,10 @@
             .catch(error => {
                 console.error("Error:", error);
                 document.getElementById("errorResult").innerHTML = "An error occurred while creating the order!";
+            })
+            .finally(() => {
+                // Hide spinner once the request finishes
+                spinner.style.display = "none";
             });
         });
 

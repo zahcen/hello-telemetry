@@ -105,6 +105,33 @@ public class OrderServlet extends HttpServlet {
             span.end();        
     }
 
+
+    private void validate_payment(boolean payment_status, boolean addMetrics){
+        Span span = null;
+        try {
+            if (addMetrics)
+                span = tracer.spanBuilder("Validate Payment").startSpan();
+
+            Thread.sleep(300);
+
+            if (! payment_status) {
+                throw new RuntimeException("Payment failed: Card declined");
+            }
+
+        } catch (Exception e) {
+            // Attach exception details to the span
+            if (addMetrics){
+                span.recordException(e);
+                span.setStatus(StatusCode.ERROR, "Payment failed");
+            }
+        } 
+        finally {
+            // Always end the span
+            if (addMetrics)
+                span.end();
+        }
+    }
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
@@ -216,26 +243,17 @@ public class OrderServlet extends HttpServlet {
         if (addMetrics)
             span.setAttribute("order.id", orderId);
 
+        validate_payment(payment_status, addMetrics);
+/*
         if (! payment_status) {
             throw new RuntimeException("Payment failed: Card declined");
         }
-
-        //if (orderAmount > 400) {
-        //    payment_status=false;
-        //    throw new RuntimeException("Payment failed: Card declined");
-        //}
-
-        // Simulate successful order placement
-        System.out.println("Order placed successfully: " + orderAmount);
-
         } catch (Exception e) {
-            // Attach exception details to the span
             if (addMetrics){
                 span.recordException(e);
                 span.setStatus(StatusCode.ERROR, "Payment failed");
             }
-
-            System.err.println("Order failed: " + e.getMessage());
+*/
 
         } finally {
             // Always end the span
