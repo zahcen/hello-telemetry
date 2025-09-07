@@ -45,7 +45,7 @@
         #orderResult {
             margin-top: 20px;
             font-size: 16px;
-            color: green;
+            color: black;
         }
         #errorResult {
             margin-top: 20px;
@@ -66,6 +66,9 @@
     <div id="orderResult"></div>
     <div id="errorResult"></div>
 
+    <%
+    if (1==2){
+    %>
     <h2>HTTP Request Headers</h2>
     <table>
         <tr>
@@ -101,7 +104,7 @@
         </tr>
         <% } %>
     </table>
-
+    <% } %>
     <script>
         document.getElementById("createOrderBtn").addEventListener("click", function () {
             // Clear previous results
@@ -117,6 +120,7 @@
             })
             .then(response => response.json()) // Expecting JSON response from backend
             .then(data => {
+                console.log("API Response:", data);
                 if (data && data.order_id) {
                     document.getElementById("orderResult").innerHTML = `
                         <h2>Order Created Successfully!</h2>
@@ -125,11 +129,11 @@
                         <p><strong>Amount:</strong> \${data.amount}</p>
                     `;
                     // Check payment status
-                    if (data.payment_status && data.payment_status.toLowerCase() === "ko") {
+                    if (!data.payment_status) {
                         document.getElementById("errorResult").innerHTML = `
                             <h3 style="color: red;">Payment Error</h3>
                         `;
-                    } else if (data.payment_status && data.payment_status.toLowerCase() === "ok") {
+                    } else if (data.payment_status) {
                         document.getElementById("orderResult").innerHTML += `
                             <p><strong>Payment:</strong> Successful ✅</p>
                         `;
