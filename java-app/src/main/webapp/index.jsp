@@ -92,6 +92,7 @@
         <thead>
             <tr>
                 <th>#</th>
+                <th>Date/Time</th>
                 <th>Order ID</th>
                 <th>Customer ID</th>
                 <th>Amount</th>
@@ -175,12 +176,22 @@
                         paymentLabel = '<span style="color:orange;font-weight:bold;">Unknown</span>';
                     }
 
+                    // Get current timestamp
+                    const now = new Date();
+                    const formattedDate = now.getFullYear() + "-" +
+                    String(now.getMonth() + 1).padStart(2, '0') + "-" +
+                    String(now.getDate()).padStart(2, '0') + " " +
+                    String(now.getHours()).padStart(2, '0') + ":" +
+                    String(now.getMinutes()).padStart(2, '0') + ":" +
+                    String(now.getSeconds()).padStart(2, '0');
+
                     // Append new row to the table
                     const ordersBody = document.getElementById("ordersBody");
                     const newRow = document.createElement("tr");
 
                     newRow.innerHTML = `
                         <td>\${orderCount}</td>
+                        <td>\${formattedDate}</td>
                         <td>\${data.order_id}</td>
                         <td>\${data.customer_id}</td>
                         <td>\${data.amount} €</td>
