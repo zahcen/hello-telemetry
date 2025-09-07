@@ -71,15 +71,13 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-
     private void validate_shipping_address(boolean addMetrics){
         Span span = null;
         if (addMetrics)
             span = tracer.spanBuilder("Validate Shipping Address").startSpan();
 
-        // Sleep for 2 seconds
         try {
-            Thread.sleep(1000);
+            Thread.sleep(600);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -87,7 +85,6 @@ public class OrderServlet extends HttpServlet {
         if (addMetrics)
             span.end();        
     }
-
 
     private void validate_billing_address(boolean addMetrics){
         Span span = null;
@@ -96,7 +93,7 @@ public class OrderServlet extends HttpServlet {
 
         // Sleep for 2 seconds
         try {
-            Thread.sleep(1000);
+            Thread.sleep(400);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -104,7 +101,6 @@ public class OrderServlet extends HttpServlet {
         if (addMetrics)
             span.end();        
     }
-
 
     private void validate_payment(boolean payment_status, boolean addMetrics){
         Span span = null;
