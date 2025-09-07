@@ -203,7 +203,7 @@ public class OrderServlet extends HttpServlet {
         // Extract values
         orderId = jsonObject.getString("order_id");
         customerId = jsonObject.getString("customer_id");
-        payment_status = jsonObject.getString("payment_status");
+        payment_status = "1".equals(jsonObject.getString("payment_status"));
 
         // Print the results
         System.out.println("Order ID: " + orderId);
