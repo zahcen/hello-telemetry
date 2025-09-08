@@ -59,10 +59,10 @@ app.post("/payment", (req, res) => {
 // Home Page
 app.get('/', (req, res) => {
 
-  const span = trace.getSpan(trace.context.active());
-  if (span) {
-    span.updateName(`Home Page`);
-  }
+//  const span = trace.getSpan(trace.context.active());
+//  if (span) {
+//    span.updateName(`Home Page`);
+//  }
 
   res.send('<h1>This is the Home Page</h1>');
 });
