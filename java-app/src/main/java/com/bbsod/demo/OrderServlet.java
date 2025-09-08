@@ -16,10 +16,6 @@ import java.util.Random;
 
 import org.json.JSONObject;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.StatusCode;
-import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.extension.annotations.WithSpan;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,11 +23,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class OrderServlet extends HttpServlet {
-
-    private final OrderMetrics metrics = new OrderMetrics();
-
-    private static final Tracer tracer =
-        GlobalOpenTelemetry.getTracer("Order");
 
     @WithSpan("getDBdata")
     protected void getDBdata(){
@@ -82,27 +73,19 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    @WithSpan()
     private void validate_billing_address(boolean addMetrics){
-        Span span = null;
-        if (addMetrics)
-            span = tracer.spanBuilder("Validate Billing Address").startSpan();
-
         // Sleep for 2 seconds
         try {
             Thread.sleep(400);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-        if (addMetrics)
-            span.end();        
     }
 
+    @WithSpan()
     private void validate_payment(boolean payment_status, boolean addMetrics){
-        Span span = null;
         try {
-            if (addMetrics)
-                span = tracer.spanBuilder("Validate Payment").startSpan();
 
             Thread.sleep(300);
 
@@ -112,28 +95,21 @@ public class OrderServlet extends HttpServlet {
 
         } catch (Exception e) {
             // Attach exception details to the span
-            if (addMetrics){
-                span.recordException(e);
-                span.setStatus(StatusCode.ERROR, "Payment failed");
-            }
         } 
-        finally {
-            // Always end the span
-            if (addMetrics)
-                span.end();
-        }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+        @WithSpan()
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
         
         String addMetricsParam  = request.getParameter("add_metrics"); // "true" or "false"
         boolean addMetrics = Boolean.parseBoolean(addMetricsParam);
         System.out.println("addMetrics="+addMetrics);
-        Span span = null;
-        if (addMetrics)
-            span = tracer.spanBuilder("PlaceOrder").startSpan();
+        
+        //Span span = null;
+        //if (addMetrics)
+        //    span = tracer.spanBuilder("PlaceOrder").startSpan();
         
         String payment_method="";
         boolean payment_status=true;
@@ -160,16 +136,16 @@ public class OrderServlet extends HttpServlet {
         String amount = String.format("%.2f", orderAmount);
 
         try {
-            if (addMetrics)
-                span.setAttribute("order_amount", orderAmount);
+            //if (addMetrics)
+            //    span.setAttribute("order_amount", orderAmount);
             if (orderAmount<100){
-                if (addMetrics)
-                    span.setAttribute("payment_method", "Invoice");
+            //    if (addMetrics)
+            //        span.setAttribute("payment_method", "Invoice");
                 payment_method="Invoice";
             }
             else{
-                if (addMetrics)
-                    span.setAttribute("payment_method", "Credit card");
+            //    if (addMetrics)
+            //        span.setAttribute("payment_method", "Credit card");
                 payment_method="Credit card";
             }
 
@@ -227,16 +203,8 @@ public class OrderServlet extends HttpServlet {
         customerId = jsonObject.getString("customer_id");
         payment_status = "1".equals(jsonObject.getString("payment_status"));
 
-        // Print the results
-        System.out.println("Order ID: " + orderId);
-        System.out.println("Customer ID: " + customerId);
-        System.out.println("Payment Status: " + payment_status);
-
-        // Record metrics
-        //metrics.incrementOrderCount(customerId, orderAmount);
-
-        if (addMetrics)
-            span.setAttribute("order.id", orderId);
+        //if (addMetrics)
+        //    span.setAttribute("order.id", orderId);
 
         validate_payment(payment_status, addMetrics);
 /*
@@ -252,10 +220,8 @@ public class OrderServlet extends HttpServlet {
 
         } finally {
             // Always end the span
-            if (addMetrics)
-                span.end();
-            // Redirect back to JSP with parameters
-            //response.sendRedirect("/MyWebApp/index.jsp?order_id=" + orderId + "&amount=" + amount + "&customer_id=" + customerId);
+            //if (addMetrics)
+            //    span.end();
             
             // Set response type to JSON
             response.setContentType("application/json");
@@ -274,37 +240,6 @@ public class OrderServlet extends HttpServlet {
             PrintWriter out = response.getWriter();
             out.print(jsonResponse.toString());
             out.flush();
-        }
-    }
-
-
-    private  void placeOrder(double orderAmount) {
-        // Start a span for the order process
-        Span span = tracer.spanBuilder("PlaceOrder").startSpan();
-
-        try {
-            // Add useful attributes to the span
-            span.setAttribute("order_amount", orderAmount);
-            span.setAttribute("payment_method", "credit_card");
-
-            // Simulate a payment error for orders above 400 EUR
-            if (orderAmount > 300) {
-                throw new RuntimeException("Payment failed: Card declined");
-            }
-
-            // Simulate successful order placement
-            System.out.println("Order placed successfully: " + orderAmount);
-
-        } catch (Exception e) {
-            // Attach exception details to the span
-            span.recordException(e);
-            span.setStatus(StatusCode.ERROR, "Payment failed");
-
-            System.err.println("Order failed: " + e.getMessage());
-
-        } finally {
-            // Always end the span
-            span.end();
         }
     }
 

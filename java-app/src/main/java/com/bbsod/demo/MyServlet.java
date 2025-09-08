@@ -70,6 +70,7 @@ public class MyServlet extends HttpServlet {
         }
     }
 
+    @WithSpan()
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
