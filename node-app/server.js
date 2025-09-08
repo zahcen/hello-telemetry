@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { trace } = require('@opentelemetry/api');
+//const { trace } = require('@opentelemetry/api');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
