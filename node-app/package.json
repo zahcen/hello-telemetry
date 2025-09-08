@@ -11,12 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "@opentelemetry/api": "0.34.0",
-    "@opentelemetry/sdk-node": "0.34.0",
-    "@opentelemetry/instrumentation": "0.34.0",
-    "@opentelemetry/instrumentation-http": "0.34.0",
-    "@opentelemetry/instrumentation-express": "0.34.0"
+    "cors": "^2.8.5"
   }
 
 }
