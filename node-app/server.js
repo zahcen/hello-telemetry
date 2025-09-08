@@ -61,22 +61,31 @@ app.get('/', (req, res) => {
 });
 
 // Product Page
-app.get('/product', (req, res) => {
-  res.send('<h1>This is the Product Page v1</h1>');
+// app.get('/product', (req, res) => {
+//   res.send('<h1>This is the Product Page v1</h1>');
+// });
+
+// app.get('/p/*', (req, res) => {
+//   res.send('<h1>This is the Product Page v2</h1>');
+// });
+
+app.get('/p/:slug', (req, res) => {
+  res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
 });
 
-app.get('/p/*', (req, res) => {
-  res.send('<h1>This is the Product Page v2</h1>');
+app.get('/c/:slug', (req, res) => {
+  res.send(`<h1>Category Page: ${req.params.slug}</h1>`);
 });
+
 
 // Category Page
-app.get('/category', (req, res) => {
-  res.send('<h1>This is the Category Page v1</h1>');
-});
+// app.get('/category', (req, res) => {
+//   res.send('<h1>This is the Category Page v1</h1>');
+// });
 
-app.get('/c/*', (req, res) => {
-  res.send('<h1>This is the Category Page v2</h1>');
-});
+// app.get('/c/*', (req, res) => {
+//   res.send('<h1>This is the Category Page v2</h1>');
+// });
 
 // Handle 404
 app.use((req, res) => {
