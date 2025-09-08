@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { trace } = require('@opentelemetry/api');
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
@@ -57,6 +58,12 @@ app.post("/payment", (req, res) => {
 
 // Home Page
 app.get('/', (req, res) => {
+
+  const span = trace.getSpan(trace.context.active());
+  if (span) {
+    span.updateName(`Home Page`);
+  }
+
   res.send('<h1>This is the Home Page</h1>');
 });
 
