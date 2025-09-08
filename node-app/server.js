@@ -25,13 +25,9 @@ function simulateCPUWorkload(ms = 300) {
 
 // POST /order → increments counter and generates a random order ID
 app.post("/payment", (req, res) => {
-    
-
     console.log("=== Incoming /payment request ===");
     console.log("Headers:", req.headers);
     console.log("Body received:", req.body);
-
-
     const { orderId, customerId, amount } = req.body;
     
     console.log("Parsed fields => orderId:", orderId, "customerId:", customerId, "amount:", amount);
@@ -57,8 +53,28 @@ app.post("/payment", (req, res) => {
         payment_status: paymentStatus
     });
 
-    
 });
+
+// Home Page
+app.get('/', (req, res) => {
+  res.send('<h1>This is the Home Page</h1>');
+});
+
+// Product Page
+app.get('/product', (req, res) => {
+  res.send('<h1>This is the Product Page</h1>');
+});
+
+// Category Page
+app.get('/category', (req, res) => {
+  res.send('<h1>This is the Category Page</h1>');
+});
+
+// Handle 404
+app.use((req, res) => {
+  res.status(404).send('<h1>404 - Page Not Found</h1>');
+});
+
 
 // Start the server
 app.listen(PORT, () => {
