@@ -1,10 +1,5 @@
 package com.bbsod.demo;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -15,18 +10,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-
-// OpenTelemetry API
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.metrics.LongCounter;
 import io.opentelemetry.api.metrics.Meter;
@@ -34,10 +27,11 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-
-//import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-
+import io.opentelemetry.extension.annotations.WithSpan;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class MyServlet extends HttpServlet {
 
@@ -66,6 +60,7 @@ public class MyServlet extends HttpServlet {
   
     }
 
+    @WithSpan()
     private void slow_method(){
         // Sleep for 2 seconds
         try {

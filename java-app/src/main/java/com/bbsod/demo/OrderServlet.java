@@ -20,11 +20,11 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.extension.annotations.WithSpan;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 
 public class OrderServlet extends HttpServlet {
 
@@ -33,6 +33,7 @@ public class OrderServlet extends HttpServlet {
     private static final Tracer tracer =
         GlobalOpenTelemetry.getTracer("Order");
 
+    @WithSpan("getDBdata")
     protected void getDBdata(){
         // JDBC connection parameters
         String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
@@ -71,19 +72,14 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
+    @WithSpan("Validate Shipping Address")
     private void validate_shipping_address(boolean addMetrics){
-        Span span = null;
-        if (addMetrics)
-            span = tracer.spanBuilder("Validate Shipping Address").startSpan();
 
         try {
             Thread.sleep(600);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-        if (addMetrics)
-            span.end();        
     }
 
     private void validate_billing_address(boolean addMetrics){

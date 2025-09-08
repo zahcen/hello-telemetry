@@ -58,6 +58,20 @@
             <version>1.53.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-extension-annotations -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-extension-annotations</artifactId>
+            <version>1.18.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.opentelemetry/opentelemetry-sdk -->
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-sdk</artifactId>
+            <version>1.54.0</version>
+        </dependency>
+
 
     </dependencies>
 
