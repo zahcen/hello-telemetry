@@ -147,7 +147,6 @@ public class OrderServlet extends HttpServlet {
     @WithSpan()
     protected void placeOrder(@SpanAttribute("order_id") String orderId, String customerId, @SpanAttribute("order_amount") double order_amount) throws ProtocolException, IOException{
         
-        
         validate_shipping_address();
         
         if (order_amount<100){
@@ -163,7 +162,11 @@ public class OrderServlet extends HttpServlet {
         getDBdata();
 
         validate_billing_address();
-        validate_payment(orderId, customerId, order_amount);
+        try {
+            validate_payment(orderId, customerId, order_amount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
