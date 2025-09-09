@@ -6,7 +6,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get clean && apt-get install -y 
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-RUN npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/instrumentation @opentelemetry/instrumentation-http @opentelemetry/instrumentation-express
+#RUN npm install @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/instrumentation @opentelemetry/instrumentation-http @opentelemetry/instrumentation-express
 
 WORKDIR /home/node/app
 
