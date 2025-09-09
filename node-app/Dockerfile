@@ -6,6 +6,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get clean && apt-get install -y 
 
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
+RUN npm cache clean --force
 RUN npm install @opentelemetry/api
 RUN npm install @opentelemetry/sdk-node 
 RUN npm install @opentelemetry/instrumentation 

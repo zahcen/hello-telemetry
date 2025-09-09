@@ -67,10 +67,6 @@ app.get('/', (req, res) => {
   res.send('<h1>This is the Home Page</h1>');
 });
 
-
-// Product Pages
-
-
 // Product Pages
 app.get('/p/product3.html', (req, res) => {
   const currentSpan = trace.getSpan(context.active());
@@ -81,7 +77,6 @@ app.get('/p/product3.html', (req, res) => {
   }
   res.send('<h1>This is the Product Page 3</h1>');
 });
-
 
 app.get('/p/product1.html', (req, res) => {
   res.send('<h1>This is the Product Page 1</h1>');
