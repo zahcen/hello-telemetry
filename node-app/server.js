@@ -66,14 +66,19 @@ app.get('/', (req, res) => {
   res.send('<h1>This is the Home Page</h1>');
 });
 
-// Product Page
-// app.get('/product', (req, res) => {
-//   res.send('<h1>This is the Product Page v1</h1>');
-// });
 
-// app.get('/p/*', (req, res) => {
-//   res.send('<h1>This is the Product Page v2</h1>');
-// });
+// Product Pages
+app.get('/p/product1.html', (req, res) => {
+  res.send('<h1>This is the Product Page 1</h1>');
+});
+
+app.get('/p/product2.html', (req, res) => {
+  res.send('<h1>This is the Product Page 2</h1>');
+});
+
+app.get('/p/*', (req, res) => {
+  res.send('<h1>This is the Product Page v2</h1>');
+});
 
 app.get('/p/:slug', (req, res) => {
   res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
