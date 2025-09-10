@@ -11,13 +11,8 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     console.log("STEP app.use");
     const currentSpan = trace.getSpan(context.active());
-    if (currentSpan) {
-      
-      currentSpan.updateName("Product Transaction Name");
-      // const xPage = res.getHeader("x-page");
-      // if (xPage) {
-      //   currentSpan.updateName(`page-${xPage}`);
-      // }
+    if (currentSpan) {      
+      currentSpan.updateName(req.transaction_name);
     }
   });
   next();
@@ -88,6 +83,7 @@ app.get('/', (req, res) => {
 // Product Pages
 app.get('/p/product3.html', (req, res) => {
   const currentSpan = trace.getSpan(context.active());
+  req.transaction_name = "Product3";
   console.log("product3");
   if (currentSpan) {
     console.log("Found span");
@@ -100,6 +96,7 @@ app.get('/p/product3.html', (req, res) => {
 });
 
 app.get('/p/product1.html', (req, res) => {
+  req.transaction_name = "Product1";
   res.send('<h1>This is the Product Page 1</h1>');
 });
 
@@ -109,17 +106,17 @@ app.get('/p/product2.html', (req, res) => {
 
 app.get('/p/*', (req, res) => {
   console.log("Found Add x-page header");
-  res.set("x-page", "product");
+  req.transaction_name = "Products";
   res.send('<h1>This is the Product Page v2</h1>');
 });
 
 app.get('/p/:slug', (req, res) => {
-  res.set("x-page", "product");
+  req.transaction_name = "Products";
   res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
 });
 
 app.get('/c/:slug', (req, res) => {
-  res.set("x-page", "category");
+  req.transaction_name = "Categories";
   res.send(`<h1>Category Page: ${req.params.slug}</h1>`);
 });
 
