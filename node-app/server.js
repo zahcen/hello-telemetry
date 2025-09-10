@@ -6,6 +6,23 @@ const app = express();
 const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
 
 
+app.use((req, res, next) => {
+  // Wait until the response is sent
+  res.on("finish", () => {
+    const currentSpan = trace.getSpan(context.active());
+    if (currentSpan) {
+      
+      currentSpan.updateName("Product Transaction Name");
+      // const xPage = res.getHeader("x-page");
+      // if (xPage) {
+      //   currentSpan.updateName(`page-${xPage}`);
+      // }
+    }
+  });
+  next();
+});
+
+
 // Middleware
 app.use(cors());
 app.use(express.json()); // Replaces body-parser.json()
