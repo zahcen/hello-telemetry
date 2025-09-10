@@ -73,7 +73,10 @@ app.get('/p/product3.html', (req, res) => {
   console.log("product3");
   if (currentSpan) {
     console.log("Found span");
-    currentSpan.updateName('Product Page');
+    // Add the product ID as a custom attribute
+    currentSpan.setAttribute("product.id", "product_id");
+    // (Optional) Add other useful attributes
+    currentSpan.setAttribute("x-page-attribute", "product");
   }
   res.send('<h1>This is the Product Page 3</h1>');
 });
@@ -87,14 +90,17 @@ app.get('/p/product2.html', (req, res) => {
 });
 
 app.get('/p/*', (req, res) => {
+  res.set("x-page", "product");
   res.send('<h1>This is the Product Page v2</h1>');
 });
 
 app.get('/p/:slug', (req, res) => {
+  res.set("x-page", "product");
   res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
 });
 
 app.get('/c/:slug', (req, res) => {
+  res.set("x-page", "category");
   res.send(`<h1>Category Page: ${req.params.slug}</h1>`);
 });
 
