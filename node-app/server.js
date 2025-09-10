@@ -13,6 +13,7 @@ app.use((req, res, next) => {
     const currentSpan = trace.getSpan(context.active());
     if (currentSpan) {      
       currentSpan.updateName(req.transaction_name);
+      currentSpan.updateName("TEST");
     }
   });
   next();
