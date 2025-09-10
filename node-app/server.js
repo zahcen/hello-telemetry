@@ -90,6 +90,7 @@ app.get('/p/product2.html', (req, res) => {
 });
 
 app.get('/p/*', (req, res) => {
+  console.log("Found Add x-page header");
   res.set("x-page", "product");
   res.send('<h1>This is the Product Page v2</h1>');
 });
