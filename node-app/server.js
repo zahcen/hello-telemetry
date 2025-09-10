@@ -91,7 +91,7 @@ app.get('/p/product3.html', (req, res) => {
     // Add the product ID as a custom attribute
     currentSpan.setAttribute("product.id", "product_id");
     // (Optional) Add other useful attributes
-    currentSpan.setAttribute("x-page-attribute", "product");
+    currentSpan.setAttribute("x-page", "product");
   }
   res.send('<h1>This is the Product Page 3</h1>');
 });
