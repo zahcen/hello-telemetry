@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
 app.use((req, res, next) => {
   // Wait until the response is sent
   res.on("finish", () => {
+    console.log("STEP app.use");
     const currentSpan = trace.getSpan(context.active());
     if (currentSpan) {
       
