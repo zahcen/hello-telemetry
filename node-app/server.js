@@ -9,16 +9,11 @@ const PORT = process.env.PORT || 3000; // Allow dynamic port for Kubernetes
 app.use((req, res, next) => {
   // Wait until the response is sent
   res.on("finish", () => {
-    console.log("STEP app.use");
     const currentSpan = trace.getSpan(context.active());
     if (currentSpan) {      
-      currentSpan.updateName(req.transaction_name);
-      currentSpan.updateName("TEST");
-
-      //req.transaction_name = "Product3";
-      currentSpan.setAttribute("x-page", "product");
-  
-
+      //currentSpan.updateName(req.transaction_name);
+      //currentSpan.updateName("TEST");
+      currentSpan.setAttribute("x-transaction.name", req.x_transaction.name);
     }
   });
   next();
@@ -87,42 +82,36 @@ app.get('/', (req, res) => {
 });
 
 // Product Pages
-app.get('/p/product3.html', (req, res) => {
-  const currentSpan = trace.getSpan(context.active());
-  req.transaction_name = "Product3";
-  console.log("product3");
-  if (currentSpan) {
-    console.log("Found span");
-    // Add the product ID as a custom attribute
-    currentSpan.setAttribute("product.id", "product_id");
-    // (Optional) Add other useful attributes
-    currentSpan.setAttribute("x-page", "product");
-  }
+app.get('/p1/product3.html', (req, res) => {
+  // if (currentSpan) {
+  //   currentSpan.setAttribute("product.id", "product_id");
+  //   currentSpan.setAttribute("x-page", "product");
+  // }
   res.send('<h1>This is the Product Page 3</h1>');
 });
 
-app.get('/p/product1.html', (req, res) => {
-  req.transaction_name = "Product1";
+app.get('/p1/product1.html', (req, res) => {
   res.send('<h1>This is the Product Page 1</h1>');
 });
 
-app.get('/p/product2.html', (req, res) => {
+app.get('/p1/product2.html', (req, res) => {
   res.send('<h1>This is the Product Page 2</h1>');
 });
 
-app.get('/p/*', (req, res) => {
+app.get('/p0/*', (req, res) => {
   console.log("Found Add x-page header");
-  req.transaction_name = "Products";
   res.send('<h1>This is the Product Page v2</h1>');
 });
 
 app.get('/p/:slug', (req, res) => {
-  req.transaction_name = "Products";
+  req.x_transaction.name = "product-page";
+  req.x_transaction.product_id = `${req.params.slug}`;
   res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
 });
 
 app.get('/c/:slug', (req, res) => {
-  req.transaction_name = "Categories";
+  req.x_transaction.name = "category-page";
+  req.x_transaction.category_id = `${req.params.slug}`;
   res.send(`<h1>Category Page: ${req.params.slug}</h1>`);
 });
 
