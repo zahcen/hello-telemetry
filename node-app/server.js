@@ -14,6 +14,11 @@ app.use((req, res, next) => {
       //currentSpan.updateName(req.transaction_name);
       //currentSpan.updateName("TEST");
       currentSpan.setAttribute("x-transaction-name", req.x_transaction_name);
+      if (req.x_transaction_product_id)
+        currentSpan.setAttribute("x-transaction-product_id", req.x_transaction_product_id);
+      if (req.x_transaction_category_id)
+        currentSpan.setAttribute("x-transaction-category_id", req.x_transaction_category_id);
+      
     }
   });
   next();
@@ -105,13 +110,13 @@ app.get('/p0/*', (req, res) => {
 
 app.get('/p/:slug', (req, res) => {
   req.x_transaction_name = "product-page";
-  req.x_transaction.product_id = `${req.params.slug}`;
+  req.x_transaction_product_id = `${req.params.slug}`;
   res.send(`<h1>Product Page: ${req.params.slug}</h1>`);
 });
 
 app.get('/c/:slug', (req, res) => {
   req.x_transaction_name = "category-page";
-  req.x_transaction.category_id = `${req.params.slug}`;
+  req.x_transaction_category_id = `${req.params.slug}`;
   res.send(`<h1>Category Page: ${req.params.slug}</h1>`);
 });
 
