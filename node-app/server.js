@@ -14,6 +14,11 @@ app.use((req, res, next) => {
     if (currentSpan) {      
       currentSpan.updateName(req.transaction_name);
       currentSpan.updateName("TEST");
+
+      //req.transaction_name = "Product3";
+      currentSpan.setAttribute("x-page", "product");
+  
+
     }
   });
   next();
