@@ -12,14 +12,11 @@
       </PatternLayout>
     </File>
 
-    <OpenTelemetry name="OpenTelemetryAppender" captureExperimentalAttributes="true" captureMapMessageAttributes="true" captureMarkerAttribute="true" captureContextDataAttributes="*">
-        
+    <OpenTelemetry name="OpenTelemetryAppender" captureExperimentalAttributes="true" captureMapMessageAttributes="true" captureMarkerAttribute="true" 
+    captureContextDataAttributes="*" includeLocationInfo="true">
         <!--PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M() - %msg%n"/-->
-        <!-- Use a pattern that includes method info -->
-        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M():%L - %msg%n"/>
-        
-
-
+        <!--PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M():%L - %msg%n"/-->
+        <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %l - %msg%n"/>
     </OpenTelemetry>
 
   </Appenders>
@@ -30,9 +27,5 @@
       <AppenderRef ref="FileAppender"/-->
       <AppenderRef ref="OpenTelemetryAppender"/>
     </Root>
-
-    <Logger name="com.example" level="debug" additivity="false">
-      <AppenderRef ref="FileAppender"/>
-    </Logger>
   </Loggers>
 </Configuration>
