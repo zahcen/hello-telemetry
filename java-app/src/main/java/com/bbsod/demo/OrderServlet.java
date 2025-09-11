@@ -26,10 +26,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class OrderServlet extends HttpServlet {
 
     String payment_method="";
     boolean payment_status = false;
+    private static final Logger logger = LogManager.getLogger(HelloServlet.class);
 
     @WithSpan()
     protected void getDBdata(){
@@ -147,6 +151,12 @@ public class OrderServlet extends HttpServlet {
     @WithSpan()
     protected void placeOrder(@SpanAttribute("order_id") String orderId, String customerId, @SpanAttribute("order_amount") double order_amount) throws ProtocolException, IOException{
         
+        System.out.println("Start placeOrder printed with SystemOut");
+        logger.info("This an information");
+        logger.debug("This an debugging");
+        logger.warn("This is a warning");
+        logger.error("This is an error");
+
         validate_shipping_address();
         
         if (order_amount<100){
@@ -168,6 +178,7 @@ public class OrderServlet extends HttpServlet {
             e.printStackTrace();
         }
 
+        System.out.println("End placeOrder printed with SystemOut");
 
     }
 

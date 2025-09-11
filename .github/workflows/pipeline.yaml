@@ -49,27 +49,27 @@ jobs:
       run: |
          kubectl apply -f mysql/manifest/
 
-    # - name: Maven Package
-    #   run: |
-    #     mvn clean package -DskipTests -f java-app/pom.xml
-    #     echo "list files"
-    #     ls -al
-    #     ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
+    - name: Maven Package
+      run: |
+        mvn clean package -DskipTests -f java-app/pom.xml
+        echo "list files"
+        ls -al
+        ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
 
-    # - name: Set up Docker Hub credentials
-    #   run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+    - name: Set up Docker Hub credentials
+      run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    # - name: Build and push java-app Docker image
-    #   run: |
-    #     ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
-    #     cp /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war java-app/
-    #     docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest -f java-app/Dockerfile .
-    #     docker push ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest        
+    - name: Build and push java-app Docker image
+      run: |
+        ls -al /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war
+        cp /home/runner/work/hello-telemetry/hello-telemetry/tomcat/MyWebApp.war java-app/
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest -f java-app/Dockerfile .
+        docker push ${{ secrets.DOCKER_USERNAME }}/hello-telemetry-java-app:latest        
 
-    # - name: Apply tomcat Kubernetes manifests
-    #   run: |
-    #      kubectl apply -f java-app/manifest/
-    #      kubectl rollout restart deploy ht-tomcat -n hello-telemetry
+    - name: Apply tomcat Kubernetes manifests
+      run: |
+         kubectl apply -f java-app/manifest/
+         kubectl rollout restart deploy ht-tomcat -n hello-telemetry
 
     # - name: Build Python Docker Image
     #   id: buildAndPushPythonImage

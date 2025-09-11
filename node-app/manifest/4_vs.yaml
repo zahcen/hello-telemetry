@@ -1,0 +1,46 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: node-vs
+  namespace: hello-telemetry
+spec:
+  gateways:
+  - istio-system/digital-factory-tls-gateway
+  hosts:
+  - ht.zitaconseil.fr
+  http:
+  - match:
+    - uri:
+          regex: "^/shop/p1/.*"
+    name: products
+    rewrite:
+      uri: "/product"
+    route:
+    - destination:
+        host: node-app-service.hello-telemetry.svc.cluster.local
+        port:
+          number: 3000
+
+  - match:
+    - uri:
+          regex: "^/shop/c1/.*"
+    name: categories
+    rewrite:
+      uri: "/category"
+    route:
+    - destination:
+        host: node-app-service.hello-telemetry.svc.cluster.local
+        port:
+          number: 3000
+
+  - match:
+    - uri:
+        prefix: /shop/
+    name: node_app
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: node-app-service.hello-telemetry.svc.cluster.local
+        port:
+          number: 3000
