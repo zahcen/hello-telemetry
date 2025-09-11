@@ -42,10 +42,10 @@ public class OrderServlet extends HttpServlet {
         String jdbcUser = "myuser";
         String jdbcPassword = "mypassword";
         try {
-            System.out.println("Load MySQL JDBC Driver");
+            logger.info("Load MySQL JDBC Driver");
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            System.out.println("Establish connection using:"+jdbcUrl);
+            logger.info("Establish connection using:"+jdbcUrl);
             Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser,
                     jdbcPassword);
 
@@ -63,10 +63,10 @@ public class OrderServlet extends HttpServlet {
                 int age = resultSet.getInt("age");
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("MySQL JDBC Driver not found.");
+            logger.info("MySQL JDBC Driver not found.");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.out.println("Connection failed.");
+            logger.info("Connection failed.");
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,8 +93,7 @@ public class OrderServlet extends HttpServlet {
             if (random.nextInt(10)<3)
                 throw new Exception("Invalid billing address");
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error("Exception in validate_billing_address", e);
         }
         logger.info("End");
     }
@@ -113,10 +112,10 @@ public class OrderServlet extends HttpServlet {
         jsonBody.put("orderId", orderId);
         jsonBody.put("customerId", customerId);
         jsonBody.put("amount",  Double.toString(orderAmount));
-        System.out.println("jsonBody="+jsonBody);
+        logger.info("jsonBody="+jsonBody);
         //jsonBody.put("payment_method", payment_method);
 
-        System.out.println("nodeJsUrl="+nodeJsUrl);
+        logger.info("nodeJsUrl="+nodeJsUrl);
         // Call internal Node.js service
         URL url = new URL(nodeJsUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -138,11 +137,11 @@ public class OrderServlet extends HttpServlet {
         }
         in.close();
         conn.disconnect();
-        System.out.println("content="+content);
+        logger.info("content="+content);
 
         // Parse JSON manually (simple approach)
         String json = content.toString();
-        System.out.println("json="+json);
+        logger.info("json="+json);
 
         // Parse the JSON
         JSONObject jsonObject = new JSONObject(json);
@@ -156,11 +155,7 @@ public class OrderServlet extends HttpServlet {
     @WithSpan()
     protected void placeOrder(@SpanAttribute("order_id") String orderId, String customerId, @SpanAttribute("order_amount") double order_amount) throws ProtocolException, IOException{
         
-        System.out.println("Start placeOrder printed with SystemOut");
-        logger.info("This an information");
-        logger.debug("This an debugging");
-        logger.warn("This is a warning");
-        logger.error("This is an error");
+        logger.info("Start");
 
         validate_shipping_address();
         
@@ -183,7 +178,7 @@ public class OrderServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        System.out.println("End placeOrder printed with SystemOut");
+        logger.info("End");
 
     }
 
@@ -200,8 +195,8 @@ public class OrderServlet extends HttpServlet {
         int customerId_int = 10000 + random.nextInt(20000 - 10000 + 1);
         String customerId = Integer.toString(customerId_int);
 
-        System.out.println("Generated Order ID: " + orderId);
-        System.out.println("Generated Customer ID: " + customerId);
+        logger.info("Generated Order ID: " + orderId);
+        logger.info("Generated Customer ID: " + customerId);
 
         getDBdata();
         double orderAmount = 10 + Math.random() * 500;
