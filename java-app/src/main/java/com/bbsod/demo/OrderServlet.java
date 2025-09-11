@@ -85,12 +85,18 @@ public class OrderServlet extends HttpServlet {
 
     @WithSpan()
     private void validate_billing_address(){
+        logger.info("Start");
         // Sleep for 2 seconds
         try {
             Thread.sleep(400);
-        } catch (InterruptedException e) {
+            Random random = new Random();
+            if (random.nextInt(10)<3)
+                throw new Exception("Invalid billing address");
+        } catch (Exception e) {
             e.printStackTrace();
+            logger.error(e.getMessage());
         }
+        logger.info("End");
     }
 
     @WithSpan()
