@@ -2,8 +2,8 @@
 <Configuration status="INFO">
   <Appenders>
     <Console name="ConsoleAppender" target="SYSTEM_OUT">
-      <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M() - %msg%n"/>
-      <!--JsonLayout compact="true" eventEol="true" /-->
+      <!--PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M() - %msg%n"/-->
+      <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %l - %msg%n"/>
     </Console>
 
     <File name="FileAppender" fileName="/tmp/tomcat-log4j.log" append="true">
@@ -13,7 +13,7 @@
     </File>
 
     <OpenTelemetry name="OpenTelemetryAppender" captureExperimentalAttributes="true" captureMapMessageAttributes="true" captureMarkerAttribute="true" 
-    captureContextDataAttributes="*" includeLocationInfo="true">
+    captureContextDataAttributes="*">
         <!--PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M() - %msg%n"/-->
         <!--PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %logger{36}.%M():%L - %msg%n"/-->
         <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%t] %-5level %l - %msg%n"/>
@@ -23,8 +23,8 @@
 
   <Loggers>
     <Root level="info">
-      <!--AppenderRef ref="ConsoleAppender"/>
-      <AppenderRef ref="FileAppender"/-->
+      <AppenderRef ref="ConsoleAppender"/>
+      <!--AppenderRef ref="FileAppender"/-->
       <AppenderRef ref="OpenTelemetryAppender"/>
     </Root>
   </Loggers>
