@@ -16,6 +16,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import io.opentelemetry.api.trace.Span;
@@ -26,14 +28,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class OrderServlet extends HttpServlet {
 
     String payment_method="";
     boolean payment_status = false;
-    private static final Logger logger = LogManager.getLogger(HelloServlet.class);
+    private static final Logger logger = LogManager.getLogger(OrderServlet.class);
 
     @WithSpan()
     protected void getDBdata(){
