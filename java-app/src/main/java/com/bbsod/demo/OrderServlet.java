@@ -98,7 +98,7 @@ public class OrderServlet extends HttpServlet {
         logger.info("End");
     }
 
-    @WithSpan()
+    //@WithSpan()
     private void validate_payment(String orderId, String customerId, double orderAmount) throws MalformedURLException, ProtocolException, IOException{
 
         // Get Node.js URL from environment variable, default to http://localhost:3000/order
