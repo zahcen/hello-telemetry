@@ -73,7 +73,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-    @WithSpan("Validate Shipping Address")
+    //@WithSpan("Validate Shipping Address")
     private void validate_shipping_address(){
 
         try {
@@ -83,7 +83,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-    @WithSpan()
+    //@WithSpan()
     private void validate_billing_address(){
         logger.info("Start");
         // Sleep for 2 seconds
