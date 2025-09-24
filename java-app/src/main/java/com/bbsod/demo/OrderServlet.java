@@ -73,7 +73,7 @@ public class OrderServlet extends HttpServlet {
         }
     }
 
-    @WithSpan("Validate Shipping Address")
+    //@WithSpan("Validate Shipping Address")
     private void validate_shipping_address(){
 
         try {
