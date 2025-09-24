@@ -34,7 +34,7 @@ public class OrderServlet extends HttpServlet {
     boolean payment_status = false;
     private static final Logger logger = LogManager.getLogger(OrderServlet.class);
 
-    @WithSpan()
+    //@WithSpan()
     protected void getDBdata(){
         // JDBC connection parameters
         String jdbcUrl = "jdbc:mysql://ht-mysql:3306/mydatabase?useSSL=false&allowPublicKeyRetrieval=true";
